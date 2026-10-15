@@ -22,6 +22,7 @@ class Deck(Base):
   created_at: Mapped[datetime] = mapped_column(
     DateTime(timezone=True), server_default=func.now()
   )
+  deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
   user: Mapped["User"] = relationship(back_populates='decks')
   cards: Mapped[list["Card"]] = relationship(

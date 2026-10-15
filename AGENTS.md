@@ -67,7 +67,9 @@ pip freeze > requirements.txt
 6. **Auth:** protected routes take `current_user: CurrentUser` (from `app/dependencies.py`).
 7. **Ownership:** a user can only access their own data. A resource that doesn't exist or belongs to another user returns **404**, never 403.
 8. **Updates use `PATCH`** with all fields optional; only fields that were sent are changed.
-9. **Cards are soft-deleted** by setting `deleted_at`. Queries for active cards filter `deleted_at IS NULL`. Reviews are never deleted, so stats stay accurate.
+9. 9. **Decks and cards are soft-deleted** by setting `deleted_at`. Queries for active
+      decks and cards filter `deleted_at IS NULL`, and cards of a soft-deleted deck are
+      treated as deleted too. Reviews are never deleted, so stats stay accurate.
 10. **Emails are lowercased** in the Pydantic schemas before they reach services.
 
 ## Code style
