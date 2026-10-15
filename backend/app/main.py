@@ -3,13 +3,14 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.routers import auth, decks
+from app.routers import auth, cards, decks
 
 app = FastAPI(title='Study App API')
 # create the application
 
 app.include_router(auth.router)
 app.include_router(decks.router)
+app.include_router(cards.router)
 
 # register a GET route 
 @app.get('/health')
