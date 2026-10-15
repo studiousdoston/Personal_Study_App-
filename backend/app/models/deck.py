@@ -8,6 +8,7 @@ from app.database import Base
 
 if TYPE_CHECKING: 
   from app.models.user import User
+  from app.models.card import Card
 
 class Deck(Base):
   __tablename__ = "decks"
@@ -23,3 +24,6 @@ class Deck(Base):
   )
 
   user: Mapped["User"] = relationship(back_populates='decks')
+  cards: Mapped[list["Card"]] = relationship(
+    back_populates="deck", cascade="all, delete-orphan", passive_deletes=True
+  )
