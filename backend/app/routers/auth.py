@@ -9,6 +9,7 @@ from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse
 from app.schemas.user import UserOut
 from app.security import create_access_token, hash_password
 from app.services import auth_service
+from app.dependencies import CurrentUser
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -48,3 +49,7 @@ def login(payload: LoginRequest, response: Response, db: Session = Depends(get_d
     refresh_token = auth_service.create_refresh_token(db, user.id)
     _set_refresh_cookie(response, refresh_token)
     return TokenResponse(access_token=create_access_token(user.id))
+
+@router.get("/me", response_model=UserOut)
+def read_me(current_user: CurrentUser):
+    return current_user
