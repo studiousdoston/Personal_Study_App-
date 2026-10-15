@@ -13,7 +13,6 @@ _hasher = PasswordHasher()
 
 # ---------- Passwords ----------
 
-
 def hash_password(password:str) -> str:
   return _hasher.hash(password)
 
