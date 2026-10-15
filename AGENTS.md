@@ -54,6 +54,7 @@ uvicorn app.main:app --reload
 alembic revision --autogenerate -m "message"
 alembic upgrade head
 alembic check
+pytest
 pip freeze > requirements.txt
 ```
 
