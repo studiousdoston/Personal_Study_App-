@@ -1,27 +1,62 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
-import { useAuth } from "../context/useAuth";
+import { Plus } from "lucide-react";
+import { useStats } from "../hooks/useStats";
+import { useDecks } from "../hooks/useDecks";
 import { StatTiles } from "../components/stats/StatTiles";
 import { DeckGrid } from "../components/deck/DeckGrid";
 import { NewDeckDialog } from "../components/deck/NewDeckDialog";
+import styles from "./HomePage.module.css";
+
+const dateFormat = new Intl.DateTimeFormat(undefined, {
+  weekday: "long",
+  month: "short",
+  day: "numeric",
+});
+// undefined = the browser's locale. Created once, reused on every render
 
 export function HomePage() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+  const { data: stats } = useStats();
+  const { data: decks } = useDecks();
   const [newDeckOpen, setNewDeckOpen] = useState(false);
+  // same query keys as AppLayout, StatTiles and DeckGrid, so React Query serves them from cache
 
-  async function handleLogout() {
-    await logout();
-    navigate("/login", { replace: true });
-  }
   return (
-    <main>
-      <h1>Home</h1>
-      <p>Logged in as {user?.email}</p>
-      <button onClick={handleLogout}>Log out</button>
+    <div className={styles.page}>
+      <header className={styles.welcome}>
+        <p className={styles.date}>{dateFormat.format(new Date())}</p>
+        <h1 className={styles.title}>Welcome back</h1>
+        {stats &&
+          (stats.cards_due > 0 ? (
+            <p className={styles.subtitle}>
+              You have <span className={styles.highlight}>{stats.cards_due}</span>{" "}
+              {stats.cards_due === 1 ? "card" : "cards"} due today.
+            </p>
+          ) : (
+            <p className={styles.subtitle}>All caught up for today.</p>
+          ))}
+      </header>
+      {/* no subtitle while loading or on error — StatTiles shows the error */}
+
       <StatTiles />
-      <DeckGrid onCreate={() => setNewDeckOpen(true)} />
+
+      <section className={styles.decks} aria-labelledby="decks-heading">
+        <div className={styles.decksHeader}>
+          <div className={styles.decksTitle}>
+            <h2 id="decks-heading" className={styles.heading}>
+              Your decks
+            </h2>
+            {decks && <span className={styles.count}>{decks.length}</span>}
+          </div>
+          <button type="button" className={styles.newButton} onClick={() => setNewDeckOpen(true)}>
+            <Plus size={18} aria-hidden="true" />
+            New deck
+          </button>
+        </div>
+
+        <DeckGrid onCreate={() => setNewDeckOpen(true)} />
+      </section>
+
       <NewDeckDialog open={newDeckOpen} onOpenChange={setNewDeckOpen} />
-    </main>
+    </div>
   );
 }
