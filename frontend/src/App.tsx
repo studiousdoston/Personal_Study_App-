@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "./api/client";
+import { api } from "./services/client";
 import styles from "./App.module.css";
 
 export default function App() {
