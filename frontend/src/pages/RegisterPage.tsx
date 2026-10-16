@@ -47,7 +47,7 @@ export function RegisterPage() {
           required
         />
         <button type="submit" disabled={submitting}>
-          {submitting ? "Logging in..." : "Log in"}
+          {submitting ? "Registering..." : "register"}
         </button>
       </form>
 
