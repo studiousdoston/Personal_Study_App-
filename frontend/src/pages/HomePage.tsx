@@ -1,12 +1,11 @@
 import { useNavigate } from "react-router";
 import { useAuth } from "../context/useAuth";
-import { useDecks } from "../hooks/useDecks";
-import { StatTiles } from "../components/StatTiles";
+import { StatTiles } from "../components/stats/StatTiles";
+import { DeckGrid } from "../components/deck/DeckGrid";
 
 export function HomePage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const decks = useDecks();
 
   async function handleLogout() {
     await logout();
@@ -18,7 +17,7 @@ export function HomePage() {
       <p>Logged in as {user?.email}</p>
       <button onClick={handleLogout}>Log out</button>
       <StatTiles />
-      <p>{decks.isPending ? "Loading decks..." : `${decks.data?.length ?? 0} decks`}</p>
+      <DeckGrid onCreate={() => alert("coming later")} />
     </main>
   );
 }
