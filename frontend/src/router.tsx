@@ -4,9 +4,18 @@ import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { RequireAuth } from "./components/RequireAuth";
 import { RedirectIfAuthed } from "./components/RedirectIfAuthed";
+import AppLayout from "./components/AppLayout";
 
 export const router = createBrowserRouter([
-  { element: <RequireAuth />, children: [{ path: "/", element: <HomePage /> }] },
+  {
+    element: <RequireAuth />,
+    children: [
+      {
+        element: <AppLayout />,
+        children: [{ path: "/", element: <HomePage /> }],
+      },
+    ],
+  },
   {
     element: <RedirectIfAuthed />,
     children: [

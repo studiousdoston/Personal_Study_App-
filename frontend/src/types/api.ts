@@ -324,6 +324,12 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Card Count */
+            card_count: number;
+            /** Due Count */
+            due_count: number;
+            /** Mastery */
+            mastery: number;
         };
         /** DeckUpdate */
         DeckUpdate: {

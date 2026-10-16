@@ -1,0 +1,127 @@
+.shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headerInner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  color: var(--color-primary-text);
+  text-decoration: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.streak {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.iconButton {
+  width: var(--tap-target);
+  height: var(--tap-target);
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) calc(var(--tap-target) + var(--space-7));
+}
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--color-surface-raised);
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-1) var(--space-4) calc(var(--space-1) + env(safe-area-inset-bottom));
+}
+
+.navLink {
+  flex: 1;
+  min-height: var(--tap-target);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+}
+
+.active {
+  color: var(--color-primary-text);
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .nav {
+    left: 50%;
+    right: auto;
+    bottom: var(--space-4);
+    transform: translateX(-50%);
+    gap: var(--space-1);
+    padding: var(--space-1);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .navLink {
+    flex: none;
+    flex-direction: row;
+    gap: var(--space-2);
+    padding: 0 var(--space-5);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-pill);
+  }
+  /* icon next to the label instead of above it */
+
+  .active {
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+  }
+}
