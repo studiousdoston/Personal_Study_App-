@@ -2,7 +2,14 @@ import uuid
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, StringConstraints, field_validator
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    field_validator,
+)
 
 
 def _empty_to_none(value: str | None) -> str | None:
@@ -40,3 +47,6 @@ class DeckOut(BaseModel):
     name: str
     description: str | None
     created_at: datetime
+    card_count: int
+    due_count: int
+    mastery: Annotated[int, Field(ge=0, le=100)]
