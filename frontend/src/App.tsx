@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import React, { useState } from "react";
 import { api } from "./services/client";
 import styles from "./App.module.css";
 import { useAuth } from "./context/useAuth";
@@ -17,7 +17,7 @@ export default function App() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  async function handleLogin(e: FormEvent<HTMLFormElement>) {
+  async function handleLogin(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setMessage("");
     try {
