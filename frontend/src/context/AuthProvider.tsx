@@ -1,19 +1,22 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import type { User } from "../types/models";
 import { refreshAccessToken, setAccessToken, setAuthFailureHandler } from "../services/client";
 import { AuthContext, type AuthStatus } from "./authContext";
-import * as authApi from "../services/auth";
+import * as authApi from "../services/auth.service";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
 
   const clearSession = useCallback(() => {
     setAccessToken(null);
     setUser(null);
     setStatus("unauthenticated");
-  }, []);
+    queryClient.clear();
+  }, [queryClient]);
 
   useEffect(() => {
     setAuthFailureHandler(clearSession);
