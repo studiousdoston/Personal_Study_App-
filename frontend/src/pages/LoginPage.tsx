@@ -1,7 +1,9 @@
 import { Link, useLocation, useNavigate } from "react-router";
-import { useAuth } from "../context/useAuth";
 import { useState } from "react";
+
+import { useAuth } from "../context/useAuth";
 import { getErrorMessage } from "../services/errors";
+import styles from "./AuthPage.module.css";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -29,34 +31,62 @@ export function LoginPage() {
   }
 
   return (
-    <main>
-      <h1>Log in</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          autoComplete="email"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          autoComplete="current-password"
-          required
-        />
-        <button type="submit" disabled={submitting}>
-          {submitting ? "Logging in..." : "Log in"}
-        </button>
-      </form>
+    <main className={styles.page}>
+      <div className={styles.card}>
+        <header className={styles.header}>
+          <h1 className={styles.title}>Welcome back</h1>
+          <p className={styles.subtitle}>Log in to continue studying.</p>
+        </header>
 
-      {error && <p role="alert">{error}</p>}
-      <p>
-        No account? <Link to={"/register"}>Register</Link>
-      </p>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.field}>
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              className={styles.input}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              className={styles.input}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              required
+            />
+          </div>
+
+          {error && (
+            <p role="alert" className={styles.error}>
+              {error}
+            </p>
+          )}
+
+          <button type="submit" className={styles.button} disabled={submitting}>
+            {submitting ? "Logging in..." : "Log in"}
+          </button>
+        </form>
+
+        <p className={styles.footer}>
+          No account?{" "}
+          <Link to="/register" className={styles.link}>
+            Register
+          </Link>
+        </p>
+      </div>
     </main>
   );
 }

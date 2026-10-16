@@ -1,7 +1,9 @@
 import { Link, useNavigate } from "react-router";
-import { useAuth } from "../context/useAuth";
 import { useState } from "react";
+
+import { useAuth } from "../context/useAuth";
 import { getErrorMessage } from "../services/errors";
+import styles from "./AuthPage.module.css";
 
 export function RegisterPage() {
   const { register } = useAuth();
@@ -26,35 +28,63 @@ export function RegisterPage() {
   }
 
   return (
-    <main>
-      <h1>Create an account</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          autoComplete="email"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password (at least 8 characters)"
-          autoComplete="new-password"
-          minLength={8}
-          required
-        />
-        <button type="submit" disabled={submitting}>
-          {submitting ? "Registering..." : "register"}
-        </button>
-      </form>
+    <main className={styles.page}>
+      <div className={styles.card}>
+        <header className={styles.header}>
+          <h1 className={styles.title}>Create an account</h1>
+          <p className={styles.subtitle}>Start building your decks.</p>
+        </header>
 
-      {error && <p role="alert">{error}</p>}
-      <p>
-        Already have an account? <Link to={"/login"}>Log in </Link>
-      </p>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <div className={styles.field}>
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              className={styles.input}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label htmlFor="password" className={styles.label}>
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              className={styles.input}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
+              minLength={8}
+              required
+            />
+          </div>
+
+          {error && (
+            <p role="alert" className={styles.error}>
+              {error}
+            </p>
+          )}
+
+          <button type="submit" className={styles.button} disabled={submitting}>
+            {submitting ? "Creating account..." : "Create account"}
+          </button>
+        </form>
+
+        <p className={styles.footer}>
+          Already have an account?{" "}
+          <Link to="/login" className={styles.link}>
+            Log in
+          </Link>
+        </p>
+      </div>
     </main>
   );
 }
