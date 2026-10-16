@@ -1,12 +1,21 @@
 from fastapi import Depends, FastAPI
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import settings
 from app.database import get_db
 from app.routers import auth, cards, decks, quiz, reviews, stats
 
 app = FastAPI(title='Study App API')
-# create the application
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.include_router(auth.router)
 app.include_router(decks.router)
