@@ -10,6 +10,8 @@ export const RATING_KEYS: Record<string, Rating> = { "1": 1, "2": 3, "3": 4, "4"
 export const REMEMBERED_MIN_RATING = 3;
 const MAX_TIME_TAKEN_MS = 3_600_000;
 
+type QueueItem = { card: Card; practice: boolean };
+
 function refreshCounts(queryClient: QueryClient) {
   queryClient.invalidateQueries({ queryKey: ["decks"] });
   queryClient.invalidateQueries({ queryKey: ["stats"] });
@@ -18,15 +20,18 @@ function refreshCounts(queryClient: QueryClient) {
 export function useReviewSession(initialCards: Card[]) {
   const queryClient = useQueryClient();
   const mutation = useCreateReview();
-  const [queue, setQueue] = useState(initialCards);
+  const [queue, setQueue] = useState<QueueItem[]>(() =>
+    initialCards.map((card) => ({ card, practice: false })),
+  );
   const [position, setPosition] = useState(0);
   const [revealed, setRevealed] = useState(false);
-  const [ratings, setRatings] = useState<Rating[]>([]);
+  const [firstRatings, setFirstRatings] = useState<Rating[]>([]);
+  const [practiceRepeats, setPracticeRepeats] = useState(0);
   const [failedRating, setFailedRating] = useState<Rating | null>(null);
   const shownAt = useRef(0);
   const needsRefresh = useRef(false);
 
-  const current = queue[position] as Card | undefined;
+  const current = queue[position] as QueueItem | undefined;
   const finished = current === undefined;
 
   useEffect(() => {
@@ -52,19 +57,28 @@ export function useReviewSession(initialCards: Card[]) {
     setRevealed(true);
   }
 
+  function next(item: QueueItem, rating: Rating) {
+    if (rating === AGAIN) setQueue((prev) => [...prev, { card: item.card, practice: true }]);
+    setPosition((prev) => prev + 1);
+    setRevealed(false);
+  }
+
   function rate(rating: Rating) {
     if (!current || !revealed || mutation.isPending) return;
+    if (current.practice) {
+      setPracticeRepeats((prev) => prev + 1);
+      next(current, rating);
+      return;
+    }
     const timeTaken = Math.min(Date.now() - shownAt.current, MAX_TIME_TAKEN_MS);
     setFailedRating(null);
     mutation.mutate(
-      { cardId: current.id, data: { rating, time_taken_ms: timeTaken } },
+      { cardId: current.card.id, data: { rating, time_taken_ms: timeTaken } },
       {
         onSuccess: () => {
           needsRefresh.current = true;
-          setRatings((prev) => [...prev, rating]);
-          if (rating === AGAIN) setQueue((prev) => [...prev, current]);
-          setPosition((prev) => prev + 1);
-          setRevealed(false);
+          setFirstRatings((prev) => [...prev, rating]);
+          next(current, rating);
           mutation.reset();
         },
         onError: () => setFailedRating(rating),
@@ -76,10 +90,11 @@ export function useReviewSession(initialCards: Card[]) {
     if (failedRating !== null) rate(failedRating);
   }
 
-  const remembered = ratings.filter((r) => r >= REMEMBERED_MIN_RATING).length;
+  const remembered = firstRatings.filter((r) => r >= REMEMBERED_MIN_RATING).length;
 
   return {
-    current,
+    current: current?.card,
+    isPractice: current?.practice ?? false,
     finished,
     revealed,
     reveal,
@@ -90,8 +105,9 @@ export function useReviewSession(initialCards: Card[]) {
     progress: { done: position, total: queue.length },
     summary: {
       cards: initialCards.length,
-      answers: ratings.length,
-      rememberedPercent: ratings.length === 0 ? 0 : Math.round((remembered / ratings.length) * 100),
+      practiceRepeats,
+      rememberedPercent:
+        initialCards.length === 0 ? 0 : Math.round((remembered / initialCards.length) * 100),
     },
   };
 }

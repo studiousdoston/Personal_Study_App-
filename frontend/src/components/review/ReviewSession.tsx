@@ -66,7 +66,11 @@ export function ReviewSession({ deckId, deckName, cards }: ReviewSessionProps) {
       <ReviewTopBar deckId={deckId} deckName={deckName} progress={session.progress} />
 
       <main className={styles.stage}>
-        <ReviewCard card={session.current!} revealed={session.revealed} />
+        <ReviewCard
+          card={session.current!}
+          revealed={session.revealed}
+          practice={session.isPractice}
+        />
         {session.error && (
           <ErrorBox message={getErrorMessage(session.error)} onRetry={session.retry} />
         )}

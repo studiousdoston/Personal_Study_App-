@@ -4,11 +4,16 @@ import styles from "./ReviewSummary.module.css";
 type ReviewSummaryProps = {
   deckId: string;
   cards: number;
-  answers: number;
+  practiceRepeats: number;
   rememberedPercent: number;
 };
 
-export function ReviewSummary({ deckId, cards, answers, rememberedPercent }: ReviewSummaryProps) {
+export function ReviewSummary({
+  deckId,
+  cards,
+  practiceRepeats,
+  rememberedPercent,
+}: ReviewSummaryProps) {
   return (
     <main className={styles.summary}>
       <h1 className={styles.title}>Session complete</h1>
@@ -22,9 +27,10 @@ export function ReviewSummary({ deckId, cards, answers, rememberedPercent }: Rev
           <dd>{rememberedPercent}%</dd>
         </div>
       </dl>
-      {answers > cards && (
+      {practiceRepeats > 0 && (
         <p className={styles.note}>
-          {answers} answers in total, because cards rated Again came back once more.
+          Plus {practiceRepeats} practice {practiceRepeats === 1 ? "repeat" : "repeats"} of cards
+          you rated Again. Those don't count toward your stats.
         </p>
       )}
       <div className={styles.actions}>
