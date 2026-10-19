@@ -10,3 +10,5 @@ export type CardCreate = components["schemas"]["CardCreate"];
 export type CardUpdate = components["schemas"]["CardUpdate"];
 export type DeckUpdate = components["schemas"]["DeckUpdate"];
 export type ReviewCreate = components["schemas"]["ReviewCreate"];
+export type Quiz = components["schemas"]["QuizOut"];
+export type QuizQuestion = components["schemas"]["QuizQuestion"];

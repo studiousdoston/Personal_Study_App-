@@ -1,0 +1,40 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: calc(600px + 2 * var(--space-4));
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+/* same column as the running quiz, so nothing shifts when the questions arrive */
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.prompt,
+.option {
+  background: var(--color-surface);
+}
+
+.prompt {
+  min-height: min(220px, 30dvh);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-lg);
+}
+
+.option {
+  min-height: var(--tap-target);
+  border-radius: var(--radius-md);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}

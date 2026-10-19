@@ -3,6 +3,7 @@ import type { ReviewExit } from "../../hooks/useReviewExit";
 import { RATING_KEYS, type SessionMode, useReviewSession } from "../../hooks/useReviewSession";
 import { getErrorMessage } from "../../services/errors";
 import type { Card } from "../../types/models";
+import { isActivatable, isTypingTarget } from "../../utils/keyboard";
 import { ErrorBox } from "../common/ErrorBox";
 import { RatingButtons } from "./RatingButtons";
 import { ReviewCard } from "./ReviewCard";
@@ -17,17 +18,6 @@ type ReviewSessionProps = {
   mode?: SessionMode;
   onRestart?: () => void;
 };
-
-function isTypingTarget(target: EventTarget | null) {
-  return (
-    target instanceof HTMLElement &&
-    (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)
-  );
-}
-
-function isActivatable(target: EventTarget | null) {
-  return target instanceof HTMLElement && target.closest("button, a") !== null;
-}
 
 export function ReviewSession({
   exit,
@@ -69,7 +59,7 @@ export function ReviewSession({
           exitTo={exit.to}
           deckName={deckName}
           progress={session.progress}
-          practice={practice}
+          badge={practice ? "Practice" : undefined}
         />
         <ReviewSummary mode={mode} exit={exit} onRestart={onRestart} {...session.summary} />
       </div>
@@ -82,7 +72,7 @@ export function ReviewSession({
         exitTo={exit.to}
         deckName={deckName}
         progress={session.progress}
-        practice={practice}
+        badge={practice ? "Practice" : undefined}
       />
 
       <main className={styles.stage}>

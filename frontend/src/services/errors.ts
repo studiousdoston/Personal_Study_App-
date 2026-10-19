@@ -12,3 +12,11 @@ export function isNotFoundError(err: unknown): boolean {
   const status = err.response?.status;
   return status === 404 || status === 422;
 }
+
+export function isNotEnoughCardsError(err: unknown): boolean {
+  return (
+    isAxiosError(err) &&
+    err.response?.status === 422 &&
+    typeof err.response.data?.detail === "string"
+  );
+}

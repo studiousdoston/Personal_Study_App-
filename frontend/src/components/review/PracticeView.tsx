@@ -42,7 +42,7 @@ export function PracticeView({ deckId }: { deckId: string }) {
 
   return (
     <div className={styles.page}>
-      <ReviewTopBar exitTo={exit.to} deckName={deck.data?.name} practice />
+      <ReviewTopBar exitTo={exit.to} deckName={deck.data?.name} badge="Practice" />
       {cards.isPending ? (
         <div className={styles.skeleton} aria-hidden="true" />
       ) : cards.isError ? (

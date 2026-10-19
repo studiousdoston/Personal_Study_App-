@@ -1,0 +1,98 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap-target);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition:
+    background 150ms ease-out,
+    border-color 150ms ease-out,
+    opacity 150ms ease-out;
+}
+
+.option:hover:not([aria-disabled="true"]) {
+  border-color: var(--color-primary);
+}
+
+.option[aria-disabled="true"] {
+  cursor: default;
+}
+/* aria-disabled instead of disabled: the buttons stay readable and focusable after
+   answering, the click handler just ignores them */
+
+.key {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+/* the number doubles as the keyboard shortcut on a laptop */
+
+.text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.correct {
+  background: color-mix(in srgb, var(--color-success) 14%, transparent);
+  border-color: var(--color-success);
+}
+
+.wrong {
+  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
+  border-color: var(--color-danger);
+}
+
+.correct .key {
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.wrong .key {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.dimmed {
+  opacity: 0.55;
+}
+/* after answering, the options that are neither right nor picked step back */
+
+.iconCorrect {
+  flex-shrink: 0;
+  color: var(--color-success);
+}
+
+.iconWrong {
+  flex-shrink: 0;
+  color: var(--color-danger);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

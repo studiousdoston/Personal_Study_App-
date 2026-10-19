@@ -3,6 +3,7 @@ import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { DeckPage } from "./pages/DeckPage";
 import { PracticePage } from "./pages/PracticePage";
+import { QuizPage } from "./pages/QuizPage";
 import { ReviewPage } from "./pages/ReviewPage";
 import { ReviewPickerPage } from "./pages/ReviewPickerPage";
 import { RegisterPage } from "./pages/RegisterPage";
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       },
       { path: "/decks/:deckId/review", element: <ReviewPage /> },
       { path: "/decks/:deckId/practice", element: <PracticePage /> },
+      { path: "/decks/:deckId/quiz", element: <QuizPage /> },
     ],
   },
   {

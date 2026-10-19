@@ -7,8 +7,7 @@ import { useDeleteDeck } from "../../hooks/useDeleteDeck";
 import { getErrorMessage } from "../../services/errors";
 import { ConfirmDialog } from "../common/ConfirmDialog";
 import { DeckFormDialog } from "./DeckFormDialog";
-
-export const QUIZ_MIN_CARDS = 4;
+import { QUIZ_MIN_CARDS } from "../../constants";
 
 export function DeckHeader({ deck }: { deck: Deck }) {
   const canStudy = deck.due_count > 0;
