@@ -1,0 +1,63 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+/* phone: 2x2 grid */
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+/* iPad and laptop: one row of four */
+
+.button {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-3);
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.again {
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+}
+
+.hard {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.good {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+}
+
+.easy {
+  color: var(--color-primary-text);
+  background: var(--color-primary-soft);
+}
+
+.again:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-danger) 20%, transparent);
+}
+
+.hard:hover:not(:disabled) {
+  border-color: var(--color-text-muted);
+}
+
+.good:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.easy:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}

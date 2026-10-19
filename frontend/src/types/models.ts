@@ -9,3 +9,4 @@ export type DeckCreate = components["schemas"]["DeckCreate"];
 export type CardCreate = components["schemas"]["CardCreate"];
 export type CardUpdate = components["schemas"]["CardUpdate"];
 export type DeckUpdate = components["schemas"]["DeckUpdate"];
+export type ReviewCreate = components["schemas"]["ReviewCreate"];

@@ -1,0 +1,41 @@
+import { Link } from "react-router";
+import { X } from "lucide-react";
+import styles from "./ReviewTopBar.module.css";
+
+type ReviewTopBarProps = {
+  deckId: string;
+  deckName?: string;
+  progress?: { done: number; total: number };
+};
+
+export function ReviewTopBar({ deckId, deckName, progress }: ReviewTopBarProps) {
+  const percent = progress && progress.total > 0 ? (progress.done / progress.total) * 100 : 0;
+
+  return (
+    <header className={styles.bar}>
+      <div className={styles.row}>
+        <Link to={`/decks/${deckId}`} className={styles.close} aria-label="End session">
+          <X size={22} aria-hidden="true" />
+        </Link>
+        <p className={styles.name}>{deckName}</p>
+        {progress && (
+          <p className={styles.count}>
+            {progress.done} / {progress.total}
+          </p>
+        )}
+      </div>
+      {progress && (
+        <div
+          className={styles.track}
+          role="progressbar"
+          aria-label="Session progress"
+          aria-valuemin={0}
+          aria-valuemax={progress.total}
+          aria-valuenow={progress.done}
+        >
+          <div className={styles.fill} style={{ width: `${percent}%` }} />
+        </div>
+      )}
+    </header>
+  );
+}

@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { DeckPage } from "./pages/DeckPage";
+import { ReviewPage } from "./pages/ReviewPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { RequireAuth } from "./components/RequireAuth";
 import { RedirectIfAuthed } from "./components/RedirectIfAuthed";
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
           { path: `/decks/:deckId`, element: <DeckPage /> },
         ],
       },
+      { path: "/decks/:deckId/review", element: <ReviewPage /> },
     ],
   },
   {

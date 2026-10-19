@@ -1,0 +1,75 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: calc(600px + 2 * var(--space-4));
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+/* focus mode: one narrow column, no app header or bottom nav */
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.controls {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: auto;
+  padding: var(--space-3) 0 calc(var(--space-4) + env(safe-area-inset-bottom));
+  background: var(--color-bg);
+}
+/* phone: margin-top: auto pushes the buttons to the bottom of the screen,
+   sticky keeps them there when a long card scrolls,
+   safe-area-inset-bottom keeps them above the iPhone home bar */
+
+@media (min-width: 768px) {
+  .controls {
+    position: static;
+    margin-top: 0;
+    padding-bottom: var(--space-6);
+  }
+}
+/* iPad and laptop: the buttons sit right under the card */
+
+.showAnswer {
+  width: 100%;
+  min-height: var(--tap-target);
+  font-weight: 600;
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+}
+
+.showAnswer:hover {
+  background: var(--color-primary-hover);
+}
+
+.hint {
+  display: none;
+  font-size: var(--font-size-xs);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 768px) {
+  .hint {
+    display: block;
+  }
+}
+
+.hint kbd {
+  padding: 0 var(--space-1);
+  font-family: var(--font-mono);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
