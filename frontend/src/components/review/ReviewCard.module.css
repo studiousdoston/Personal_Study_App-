@@ -1,4 +1,32 @@
-.card {
+.scene {
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  perspective: 1200px;
+}
+/* the whole card is one button (reset to look like nothing).
+   perspective = how far the "camera" is from the card.
+   Without it the rotation looks flat, like the card just gets narrower */
+
+.inner {
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 450ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+/* preserve-3d = the two faces live in the same 3D space as this element,
+   so rotating it turns both faces together like a real card */
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+.face {
+  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -8,9 +36,21 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
-/* min-height = the card already has room for the answer,
-   so revealing it doesn't push the buttons around */
+/* grid-area 1 / 1 on both faces = they sit in the same cell, on top of each other.
+   The cell is as tall as the taller face, so the card never changes height when it flips.
+   backface-visibility: hidden = a face is invisible while it's turned away from you */
+
+.backFace {
+  transform: rotateY(180deg);
+}
+/* the back starts already turned around; after the 180deg flip it faces you */
+
+.scene:hover .face {
+  border-color: var(--color-primary);
+}
 
 .labelRow {
   display: flex;
@@ -39,6 +79,7 @@
 
 .front,
 .back {
+  display: block;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
@@ -53,8 +94,36 @@
   font-size: var(--font-size-lg);
 }
 
-.divider {
-  margin: var(--space-4) 0 var(--space-3);
-  border: none;
-  border-top: 1px solid var(--color-border);
+.hint {
+  display: block;
+  margin-top: auto;
+  padding-top: var(--space-3);
+  font-size: var(--font-size-xs);
+  text-align: center;
+  color: var(--color-text-muted);
 }
+/* margin-top: auto pushes the hint to the bottom of the card */
+
+.hintKeyboard {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hintTouch {
+    display: none;
+  }
+
+  .hintKeyboard {
+    display: inline;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+/* invisible on screen, but screen readers read it. It announces the answer after the flip */

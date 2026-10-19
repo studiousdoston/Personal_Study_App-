@@ -34,9 +34,9 @@ export function ReviewSession({ deckId, deckName, cards }: ReviewSessionProps) {
     if (isTypingTarget(e.target) || session.finished) return;
 
     if (e.key === " " || e.key === "Enter") {
-      if (session.revealed || isActivatable(e.target)) return;
+      if (isActivatable(e.target)) return;
       e.preventDefault();
-      session.reveal();
+      session.flip();
       return;
     }
 
@@ -67,9 +67,12 @@ export function ReviewSession({ deckId, deckName, cards }: ReviewSessionProps) {
 
       <main className={styles.stage}>
         <ReviewCard
+          key={session.progress.done}
           card={session.current!}
+          flipped={session.flipped}
           revealed={session.revealed}
           practice={session.isPractice}
+          onFlip={session.flip}
         />
         {session.error && (
           <ErrorBox message={getErrorMessage(session.error)} onRetry={session.retry} />
@@ -77,16 +80,15 @@ export function ReviewSession({ deckId, deckName, cards }: ReviewSessionProps) {
       </main>
 
       <div className={styles.controls}>
-        {session.revealed ? (
+        <div
+          className={`${styles.ratings} ${session.revealed ? "" : styles.waiting}`}
+          inert={!session.revealed}
+        >
           <RatingButtons onRate={session.rate} disabled={session.isPending} />
-        ) : (
-          <button type="button" className={styles.showAnswer} onClick={session.reveal}>
-            Show answer
-          </button>
-        )}
+        </div>
         <p className={styles.hint}>
-          <kbd>Space</kbd> show answer · <kbd>1</kbd> Again · <kbd>2</kbd> Hard · <kbd>3</kbd> Good
-          · <kbd>4</kbd> Easy
+          <kbd>Space</kbd> flip · <kbd>1</kbd> Again · <kbd>2</kbd> Hard · <kbd>3</kbd> Good ·{" "}
+          <kbd>4</kbd> Easy
         </p>
       </div>
     </div>

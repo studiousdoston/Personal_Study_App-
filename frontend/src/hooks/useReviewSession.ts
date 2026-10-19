@@ -24,6 +24,7 @@ export function useReviewSession(initialCards: Card[]) {
     initialCards.map((card) => ({ card, practice: false })),
   );
   const [position, setPosition] = useState(0);
+  const [flipped, setFlipped] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const [firstRatings, setFirstRatings] = useState<Rating[]>([]);
   const [practiceRepeats, setPracticeRepeats] = useState(0);
@@ -52,14 +53,16 @@ export function useReviewSession(initialCards: Card[]) {
     };
   }, [queryClient]);
 
-  function reveal() {
+  function flip() {
     if (finished) return;
-    setRevealed(true);
+    if (!flipped) setRevealed(true);
+    setFlipped(!flipped);
   }
 
   function next(item: QueueItem, rating: Rating) {
     if (rating === AGAIN) setQueue((prev) => [...prev, { card: item.card, practice: true }]);
     setPosition((prev) => prev + 1);
+    setFlipped(false);
     setRevealed(false);
   }
 
@@ -96,8 +99,9 @@ export function useReviewSession(initialCards: Card[]) {
     current: current?.card,
     isPractice: current?.practice ?? false,
     finished,
+    flipped,
     revealed,
-    reveal,
+    flip,
     rate,
     retry,
     isPending: mutation.isPending,

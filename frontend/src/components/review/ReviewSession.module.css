@@ -39,19 +39,15 @@
 }
 /* iPad and laptop: the buttons sit right under the card */
 
-.showAnswer {
-  width: 100%;
-  min-height: var(--tap-target);
-  font-weight: 600;
-  color: var(--color-primary-contrast);
-  background: var(--color-primary);
-  border: none;
-  border-radius: var(--radius-md);
+.ratings {
+  transition: opacity 200ms ease-out;
 }
 
-.showAnswer:hover {
-  background: var(--color-primary-hover);
+.waiting {
+  opacity: 0.3;
 }
+/* before the flip the buttons are already there (so nothing jumps), just faded.
+   inert in the TSX makes them unclickable and skips them with Tab */
 
 .hint {
   display: none;
