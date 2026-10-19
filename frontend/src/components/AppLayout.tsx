@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useLocation } from "react-router";
 import { BookOpen, Flame, Layers, LogOut, RotateCcw } from "lucide-react";
 import { useAuth } from "../context/useAuth";
 import { useStats } from "../hooks/useStats";
@@ -11,6 +11,8 @@ function navClass({ isActive }: { isActive: boolean }) {
 export default function AppLayout() {
   const { logout } = useAuth();
   const { data: stats } = useStats();
+  const { pathname } = useLocation();
+  const inDecks = pathname === "/" || pathname.startsWith("/decks");
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
@@ -48,7 +50,7 @@ export default function AppLayout() {
       </main>
 
       <nav className={styles.nav} aria-label="Main">
-        <NavLink to="/" end className={navClass}>
+        <NavLink to="/" end className={() => navClass({ isActive: inDecks })}>
           <Layers size={22} aria-hidden="true" />
           <span>Decks</span>
         </NavLink>

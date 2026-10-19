@@ -1,0 +1,133 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  min-height: var(--tap-target);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--color-primary-text);
+}
+/* align-self: flex-start = the link is only as wide as its text,
+   not stretched across the page like the other column children */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.title {
+  font-size: var(--font-size-xl);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+/* overflow-wrap: anywhere = a very long deck name breaks instead of overflowing */
+
+.description {
+  color: var(--color-text-muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+/* list-style: none + padding 0 = removes the default bullets and indent of <ul> */
+
+.chip {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+.chip strong {
+  font-family: var(--font-mono);
+  color: var(--color-text);
+}
+/* numbers in mono, like "824 cards total" on the Home tiles */
+
+.chipDue {
+  background: var(--color-primary-soft);
+  border-color: transparent;
+}
+
+.chipDue strong {
+  color: var(--color-primary-text);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.button {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-5);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+}
+/* flex: 1 = on phones the two buttons share the row equally */
+
+@media (min-width: 768px) {
+  .button {
+    flex: none;
+  }
+}
+/* on wider screens they're only as wide as their text */
+
+.primary {
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border: 1px solid var(--color-primary);
+}
+
+.primary:hover:not(.disabled) {
+  background: var(--color-primary-hover);
+}
+
+.secondary {
+  background: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+.secondary:hover:not(.disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* :not(.disabled) on the hovers = disabled buttons don't react to the mouse */
