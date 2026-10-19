@@ -1,0 +1,59 @@
+.banner {
+  position: fixed;
+  top: calc(var(--space-2) + env(safe-area-inset-top));
+  left: var(--space-4);
+  right: var(--space-4);
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+}
+/* floats at the top so it never covers the bottom nav or the rating / Next buttons */
+
+.text {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.later,
+.reload {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+}
+
+.later {
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-border);
+}
+
+.later:hover {
+  background: var(--color-surface);
+}
+
+.reload {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border: none;
+}
+
+.reload:hover {
+  background: var(--color-primary-hover);
+}

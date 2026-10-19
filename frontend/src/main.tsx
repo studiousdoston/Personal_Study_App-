@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthProvider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router";
 import { router } from "./router.tsx";
+import { UpdateBanner } from "./components/common/UpdateBanner.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,6 +22,7 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <RouterProvider router={router} />
+        <UpdateBanner />
       </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,
