@@ -83,7 +83,7 @@
 
 .actions {
   display: flex;
-  gap: var(--space-1);
+  gap: 0;
   margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-2)) 0 0;
 }
 /* holds Edit now and Delete in 5c. The negative margin pulls the 48px buttons
@@ -93,7 +93,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--tap-target);
+  width: 40px;
   height: var(--tap-target);
   color: var(--color-text-muted);
   background: transparent;
@@ -104,6 +104,10 @@
 .iconButton:hover {
   color: var(--color-text);
   background: var(--color-surface-raised);
+}
+
+.iconDanger:hover {
+  color: var(--color-danger);
 }
 
 .empty {

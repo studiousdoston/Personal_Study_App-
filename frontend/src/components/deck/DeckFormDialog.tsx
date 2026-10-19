@@ -1,24 +1,30 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useId, useState } from "react";
 import { useCreateDeck } from "../../hooks/useCreateDeck";
+import { useUpdateDeck } from "../../hooks/useUpdateDeck";
 import { getErrorMessage } from "../../services/errors";
-import styles from "./NewDeckDialog.module.css";
+import type { Deck, DeckUpdate } from "../../types/models";
+import styles from "./DeckFormDialog.module.css";
 
-type NewDeckDialogProps = {
+type DeckFormDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  deck?: Deck;
 };
 
-export function NewDeckDialog({ open, onOpenChange }: NewDeckDialogProps) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const mutation = useCreateDeck();
+export function DeckFormDialog({ open, onOpenChange, deck }: DeckFormDialogProps) {
+  const isEdit = deck !== undefined;
+  const [name, setName] = useState(deck?.name ?? "");
+  const [description, setDescription] = useState(deck?.description ?? "");
+  const createMutation = useCreateDeck();
+  const updateMutation = useUpdateDeck();
+  const mutation = isEdit ? updateMutation : createMutation;
   const nameId = useId();
   const descriptionId = useId();
 
   function close() {
-    setName("");
-    setDescription("");
+    setName(deck?.name ?? "");
+    setDescription(deck?.description ?? "");
     mutation.reset();
     onOpenChange(false);
   }
@@ -34,11 +40,19 @@ export function NewDeckDialog({ open, onOpenChange }: NewDeckDialogProps) {
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!canSubmit) return;
+    const data = { name: name.trim(), description: description.trim() || null };
     try {
-      await mutation.mutateAsync({
-        name: name.trim(),
-        description: description.trim() || null,
-      });
+      if (isEdit) {
+        const changes: DeckUpdate = {};
+        if (data.name !== deck.name) changes.name = data.name;
+        if (data.description !== deck.description) changes.description = data.description;
+        if (Object.keys(changes).length > 0) {
+          await updateMutation.mutateAsync({ deckId: deck.id, data: changes });
+        }
+      } else {
+        await createMutation.mutateAsync(data);
+      }
     } catch {
       return;
     }
@@ -53,9 +67,13 @@ export function NewDeckDialog({ open, onOpenChange }: NewDeckDialogProps) {
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Content className={styles.content}>
           <header className={styles.header}>
-            <Dialog.Title className={styles.title}>New deck</Dialog.Title>
+            <Dialog.Title className={styles.title}>
+              {isEdit ? "Edit deck" : "New deck"}
+            </Dialog.Title>
             <Dialog.Description className={styles.subtitle}>
-              Give it a name. You can add cards next.
+              {isEdit
+                ? "Rename the deck or change its description."
+                : "Give it a name. You can add cards next."}
             </Dialog.Description>
           </header>
 
@@ -99,7 +117,13 @@ export function NewDeckDialog({ open, onOpenChange }: NewDeckDialogProps) {
                 </button>
               </Dialog.Close>
               <button type="submit" className={styles.primary} disabled={!canSubmit}>
-                {mutation.isPending ? "Creating..." : "Create deck"}
+                {isEdit
+                  ? mutation.isPending
+                    ? "Saving..."
+                    : "Save changes"
+                  : mutation.isPending
+                    ? "Creating..."
+                    : "Create deck"}
               </button>
             </div>
           </form>

@@ -4,7 +4,7 @@ import { useStats } from "../hooks/useStats";
 import { useDecks } from "../hooks/useDecks";
 import { StatTiles } from "../components/stats/StatTiles";
 import { DeckGrid } from "../components/deck/DeckGrid";
-import { NewDeckDialog } from "../components/deck/NewDeckDialog";
+import { DeckFormDialog } from "../components/deck/DeckFormDialog";
 import styles from "./HomePage.module.css";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, {
@@ -56,7 +56,7 @@ export function HomePage() {
         <DeckGrid onCreate={() => setNewDeckOpen(true)} />
       </section>
 
-      <NewDeckDialog open={newDeckOpen} onOpenChange={setNewDeckOpen} />
+      <DeckFormDialog open={newDeckOpen} onOpenChange={setNewDeckOpen} />
     </div>
   );
 }

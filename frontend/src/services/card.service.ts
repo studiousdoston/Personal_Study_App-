@@ -15,3 +15,7 @@ export async function updateCard(cardId: string, data: CardUpdate): Promise<Card
   const res = await api.patch<Card>(`/cards/${cardId}`, data);
   return res.data;
 }
+
+export async function deleteCard(cardId: string): Promise<void> {
+  await api.delete(`/cards/${cardId}`);
+}
