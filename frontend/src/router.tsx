@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
+import { DeckPage } from "./pages/DeckPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { RequireAuth } from "./components/RequireAuth";
 import { RedirectIfAuthed } from "./components/RedirectIfAuthed";
@@ -12,7 +13,10 @@ export const router = createBrowserRouter([
     children: [
       {
         element: <AppLayout />,
-        children: [{ path: "/", element: <HomePage /> }],
+        children: [
+          { path: "/", element: <HomePage /> },
+          { path: `/decks/:deckId`, element: <DeckPage /> },
+        ],
       },
     ],
   },

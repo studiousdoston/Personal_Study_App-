@@ -12,3 +12,7 @@ export async function createDeck(data: DeckCreate): Promise<Deck> {
 }
 
 // get, update and delete come later, when the deck page needs them.
+export async function getDeck(deckId: string): Promise<Deck> {
+  const res = await api.get<Deck>(`/decks/${deckId}`);
+  return res.data;
+}
