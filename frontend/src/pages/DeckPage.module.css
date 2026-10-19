@@ -131,3 +131,29 @@
   cursor: not-allowed;
 }
 /* :not(.disabled) on the hovers = disabled buttons don't react to the mouse */
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+}
+
+.count {
+  padding: 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+/* the same small count badge as "Your decks (4)" on Home */

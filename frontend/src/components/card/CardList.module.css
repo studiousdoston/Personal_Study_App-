@@ -1,0 +1,81 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+/* phone: front on top, back below (one column).
+   position: relative so the Due pill can sit in the corner */
+
+@media (min-width: 768px) {
+  .row {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+  }
+}
+/* iPad and laptop: front and back side by side, equal widths */
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+/* min-width: 0 lets long words wrap inside the column instead of stretching it */
+
+.label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.front,
+.back {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+/* pre-wrap keeps the line breaks a user typed inside a card,
+   overflow-wrap breaks very long words or URLs */
+
+.front {
+  font-weight: 600;
+}
+
+.back {
+  color: var(--color-text-muted);
+}
+
+.due {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-primary-text);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-pill);
+}
+/* small green pill in the top-right corner of a due card */
+
+.empty {
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+}
+/* dashed box, the same "empty slot" look as the Create deck tile */

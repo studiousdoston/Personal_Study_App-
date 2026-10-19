@@ -5,6 +5,7 @@ import { useDeck } from "../hooks/useDeck";
 
 import styles from "./DeckPage.module.css";
 import { DeckHeader } from "../components/deck/DeckHeader";
+import { CardList } from "../components/card/CardList";
 
 export function DeckPage() {
   const { deckId } = useParams();
@@ -24,7 +25,15 @@ function DeckView({ deckId }: { deckId: string }) {
         All decks
       </Link>
       {deck.data ? <DeckHeader deck={deck.data} /> : <p>Loading deck...</p>}
-      <pre>{cards.isPending ? "Loading cards..." : JSON.stringify(cards.data, null, 2)}</pre>
+      <section className={styles.cards} aria-label="cards-heading">
+        <div className={styles.sectionHeader}>
+          <h2 id="cards-heading" className={styles.sectionTitle}>
+            Cards
+          </h2>
+          {cards.data && <span className={styles.count}>{cards.data.length}</span>}
+        </div>
+        {cards.data ? <CardList cards={cards.data} /> : <p>Loading cards...</p>}
+      </section>
     </div>
   );
 }
