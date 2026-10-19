@@ -7,7 +7,7 @@ from app.config import settings
 from app.database import get_db
 from app.routers import auth, cards, decks, quiz, reviews, stats
 
-app = FastAPI(title='Study App API')
+app = FastAPI(title='BrainMaxx API')
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,

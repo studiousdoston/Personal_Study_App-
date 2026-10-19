@@ -19,7 +19,7 @@ export default function AppLayout() {
         <div className={styles.headerInner}>
           <NavLink to="/" className={styles.brand}>
             <BookOpen size={22} aria-hidden="true" />
-            <span>Study App</span>
+            <span>BrainMaxx</span>
           </NavLink>
           {/* logo + name, links back to Home */}
 

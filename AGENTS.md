@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## Project
 
-A personal flashcard and quiz app for daily, solo use (no social features).
+**BrainMaxx** is a personal flashcard and quiz app for daily, solo use (no social features).
 Cards are scheduled with the SM-2 spaced repetition algorithm.
 
 Roadmap:
