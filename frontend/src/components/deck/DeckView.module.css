@@ -85,3 +85,31 @@
   background: var(--color-primary-hover);
 }
 /* margin-left: auto pushes the button to the right end of the "Cards (n)" row */
+
+.noMatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+}
+/* same dashed "empty" box as the card list, so "no matches" reads as an empty state */
+
+.clearButton {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.clearButton:hover {
+  background: var(--color-surface-raised);
+}

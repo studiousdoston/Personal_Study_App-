@@ -1,0 +1,95 @@
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+/* flex-wrap: the toggle sits beside the search when there is room,
+   and drops below it on very narrow phones */
+
+.search {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-3);
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+/* pointer-events: none so a tap on the icon still focuses the input underneath */
+
+.input {
+  width: 100%;
+  height: var(--tap-target);
+  padding: 0 var(--space-4) 0 calc(var(--space-3) + 18px + var(--space-2));
+  font-size: 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  -webkit-appearance: none;
+  appearance: none;
+}
+/* font-size 16px stops iOS Safari from zooming in on focus;
+   left padding = icon offset + icon width + a small gap */
+
+.input:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.toggle {
+  flex: none;
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+.toggle:hover {
+  color: var(--color-text);
+}
+
+.toggle[aria-pressed="true"] {
+  color: var(--color-primary-text);
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary-soft);
+}
+/* styled from aria-pressed, so the look and what screen readers hear can't drift apart */
+
+.status {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.status:not(:empty) {
+  margin-top: var(--space-2);
+}
+/* the live region always stays in the DOM (screen readers only announce changes
+   to a region that already exists); when empty it has no height and no margin */
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+/* hidden on screen, still read by screen readers */

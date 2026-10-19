@@ -10,8 +10,10 @@ import { DeckNotFound } from "./DeckNotFound";
 import { CardList } from "../card/CardList";
 import { CardListSkeleton } from "../card/CardListSkeleton";
 import { CardFormDialog } from "../card/CardFormDialog";
+import { CardFilters } from "../card/CardFilters";
 import { ErrorBox } from "../common/ErrorBox";
 import { getErrorMessage, isNotFoundError } from "../../services/errors";
+import { filterCards, isFilterActive } from "../../utils/filterCards";
 import type { Card } from "../../types/models";
 
 type CardDialogState = { mode: "closed" } | { mode: "add" } | { mode: "edit"; card: Card };
@@ -21,6 +23,17 @@ export function DeckView({ deckId }: { deckId: string }) {
   const cards = useCards(deckId);
   const [dialog, setDialog] = useState<CardDialogState>({ mode: "closed" });
   const editingCard = dialog.mode === "edit" ? dialog.card : undefined;
+  const [now] = useState(() => Date.now());
+  const [query, setQuery] = useState("");
+  const [dueOnly, setDueOnly] = useState(false);
+  const filterActive = isFilterActive({ query, dueOnly });
+  const allCards = cards.data ?? [];
+  const visibleCards = filterCards(allCards, { query, dueOnly, now });
+
+  function clearFilters() {
+    setQuery("");
+    setDueOnly(false);
+  }
 
   if (deck.isError && isNotFoundError(deck.error)) {
     return <DeckNotFound />;
@@ -58,11 +71,34 @@ export function DeckView({ deckId }: { deckId: string }) {
         ) : cards.isError ? (
           <ErrorBox message={getErrorMessage(cards.error)} onRetry={() => cards.refetch()} />
         ) : (
-          <CardList
-            cards={cards.data}
-            onEdit={(card) => setDialog({ mode: "edit", card })}
-            onAdd={() => setDialog({ mode: "add" })}
-          />
+          <>
+            {allCards.length > 0 && (
+              <CardFilters
+                query={query}
+                dueOnly={dueOnly}
+                onQueryChange={setQuery}
+                onDueOnlyChange={setDueOnly}
+                shown={visibleCards.length}
+                total={allCards.length}
+                active={filterActive}
+              />
+            )}
+            {allCards.length > 0 && visibleCards.length === 0 ? (
+              <div className={styles.noMatch}>
+                <p>{query.trim() !== "" ? `No cards match “${query.trim()}”` : "No due cards"}</p>
+                <button type="button" className={styles.clearButton} onClick={clearFilters}>
+                  Clear filters
+                </button>
+              </div>
+            ) : (
+              <CardList
+                cards={visibleCards}
+                now={now}
+                onEdit={(card) => setDialog({ mode: "edit", card })}
+                onAdd={() => setDialog({ mode: "add" })}
+              />
+            )}
+          </>
         )}
       </section>
       <CardFormDialog

@@ -3,27 +3,24 @@ import { Pencil, Plus, Trash2 } from "lucide-react";
 import { useDeleteCard } from "../../hooks/useDeleteCard";
 import { getErrorMessage } from "../../services/errors";
 import type { Card } from "../../types/models";
+import { isDue } from "../../utils/isDue";
 import { ConfirmDialog } from "../common/ConfirmDialog";
 import styles from "./CardList.module.css";
 
 type CardListProps = {
   cards: Card[];
+  now: number;
   onEdit: (card: Card) => void;
   onAdd: () => void;
 };
 
 const PREVIEW_LENGTH = 80;
 
-function isDue(card: Card, now: number) {
-  return new Date(card.next_review_at).getTime() <= now;
-}
-
 function preview(text: string) {
   return text.length > PREVIEW_LENGTH ? `${text.slice(0, PREVIEW_LENGTH).trimEnd()}…` : text;
 }
 
-export function CardList({ cards, onEdit, onAdd }: CardListProps) {
-  const [now] = useState(() => Date.now());
+export function CardList({ cards, now, onEdit, onAdd }: CardListProps) {
   const [deleting, setDeleting] = useState<Card | null>(null);
   const deleteMutation = useDeleteCard();
 

@@ -7,5 +7,5 @@ export function DeckPage() {
   if (!deckId) {
     return <Navigate to={"/"} replace />;
   }
-  return <DeckView deckId={deckId} />;
+  return <DeckView key={deckId} deckId={deckId} />;
 }
