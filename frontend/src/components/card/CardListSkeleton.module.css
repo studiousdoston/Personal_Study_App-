@@ -1,0 +1,23 @@
+.skeleton {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.skeletonRow {
+  height: 88px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+/* same pulse as the Home deck skeletons; the row height roughly matches a real card row,
+   so nothing jumps when the data arrives */

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 export function getErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err) && typeof err.response?.data?.detail === "string") {
@@ -7,4 +7,8 @@ export function getErrorMessage(err: unknown): string {
   return "Something went wrong";
 }
 
-
+export function isNotFoundError(err: unknown): boolean {
+  if (!isAxiosError(err)) return false;
+  const status = err.response?.status;
+  return status === 404 || status === 422;
+}

@@ -1,0 +1,68 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  min-height: var(--tap-target);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--color-primary-text);
+}
+/* align-self: flex-start = the link is only as wide as its text,
+   not stretched across the page like the other column children */
+
+.skeleton {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.skeletonHeader {
+  height: 200px;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+/* same pulse as the Home deck skeletons; the size roughly matches the real header,
+   so nothing jumps when the data arrives */
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-lg);
+}
+
+.count {
+  padding: 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+/* the same small count badge as "Your decks (4)" on Home */

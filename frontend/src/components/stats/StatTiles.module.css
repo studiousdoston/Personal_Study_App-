@@ -12,68 +12,6 @@
 }
 /* iPad and laptop: one row of 4 */
 
-.tile {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
-}
-
-.top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-/* label on the left, icon on the right */
-
-.label {
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-
-.icon {
-  color: var(--color-primary-text);
-}
-
-.iconAccent {
-  color: var(--color-accent);
-}
-
-.value {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-1);
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-/* baseline = "cards" sits on the same line as the bottom of "24".
-   tabular-nums = every digit has the same width, so numbers don't shift */
-
-.valueAccent {
-  color: var(--color-accent-text);
-}
-
-.unit {
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  color: var(--color-text-muted);
-}
-
-.note {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
-
 .error {
   color: var(--color-danger);
   font-size: var(--font-size-sm);

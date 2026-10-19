@@ -15,12 +15,12 @@ Roadmap:
 
 ## Stack
 
-| Layer                  | Choice                                                                                                                              |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Backend                | FastAPI (REST), Python 3.13, sync SQLAlchemy 2.0                                                                                    |
-| Database               | PostgreSQL 16 in Docker, migrations with Alembic                                                                                    |
-| Auth                   | Argon2 password hashing, JWT access token (15 min), random refresh token in an httpOnly cookie (14 days), stored hashed and rotated |
-| Frontend (not started) | Vite + React, CSS Modules, mobile-first PWA                                                                                         |
+| Layer    | Choice                                                                                                                              |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Backend  | FastAPI (REST), Python 3.13, sync SQLAlchemy 2.0                                                                                    |
+| Database | PostgreSQL 16 in Docker, migrations with Alembic                                                                                    |
+| Auth     | Argon2 password hashing, JWT access token (15 min), random refresh token in an httpOnly cookie (14 days), stored hashed and rotated |
+| Frontend | Vite + React, CSS Modules, mobile-first PWA                                                                                         |
 
 ## Repository layout
 
@@ -89,6 +89,14 @@ pip freeze > requirements.txt
 ```
 
 - Keep code free of long explanatory comments. Explain changes in your reply instead.
+
+## Frontend conventions
+
+- One component per file, named exports.
+- Components are grouped by feature in `src/components/<feature>/`; shared ones go in `src/components/common/`.
+- Each component has its own CSS Module next to it (`Name.tsx` + `Name.module.css`).
+- Pages in `src/pages/` only read route params and compose components.
+- Use design tokens from `src/styles/global.css` only; no new hex colors.
 
 ## Database and migrations
 

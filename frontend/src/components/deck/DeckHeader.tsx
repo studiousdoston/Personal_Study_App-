@@ -1,5 +1,5 @@
 import { ListChecks, Play } from "lucide-react";
-import styles from "../../pages/DeckPage.module.css";
+import styles from "./DeckHeader.module.css";
 import type { Deck } from "../../types/models";
 import { Link } from "react-router";
 

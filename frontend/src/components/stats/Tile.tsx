@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import styles from "./StatTiles.module.css";
+import styles from "./Tile.module.css";
 
 type TileProps = {
   label: string;
