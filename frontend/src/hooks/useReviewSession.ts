@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useCreateReview } from "./useCreateReview";
 import type { Card } from "../types/models";
+import { shuffle } from "../utils/shuffle";
 
+export type SessionMode = "review" | "practice";
 export type Rating = 1 | 3 | 4 | 5;
 
 export const AGAIN: Rating = 1;
@@ -17,11 +19,14 @@ function refreshCounts(queryClient: QueryClient) {
   queryClient.invalidateQueries({ queryKey: ["stats"] });
 }
 
-export function useReviewSession(initialCards: Card[]) {
+export function useReviewSession(initialCards: Card[], mode: SessionMode = "review") {
   const queryClient = useQueryClient();
   const mutation = useCreateReview();
   const [queue, setQueue] = useState<QueueItem[]>(() =>
-    initialCards.map((card) => ({ card, practice: false })),
+    (mode === "practice" ? shuffle(initialCards) : initialCards).map((card) => ({
+      card,
+      practice: false,
+    })),
   );
   const [position, setPosition] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -73,6 +78,11 @@ export function useReviewSession(initialCards: Card[]) {
       next(current, rating);
       return;
     }
+    if (mode === "practice") {
+      setFirstRatings((prev) => [...prev, rating]);
+      next(current, rating);
+      return;
+    }
     const timeTaken = Math.min(Date.now() - shownAt.current, MAX_TIME_TAKEN_MS);
     setFailedRating(null);
     mutation.mutate(
@@ -97,7 +107,7 @@ export function useReviewSession(initialCards: Card[]) {
 
   return {
     current: current?.card,
-    isPractice: current?.practice ?? false,
+    isPractice: mode === "review" && (current?.practice ?? false),
     finished,
     flipped,
     revealed,
@@ -110,6 +120,7 @@ export function useReviewSession(initialCards: Card[]) {
     summary: {
       cards: initialCards.length,
       practiceRepeats,
+      remembered,
       rememberedPercent:
         initialCards.length === 0 ? 0 : Math.round((remembered / initialCards.length) * 100),
     },

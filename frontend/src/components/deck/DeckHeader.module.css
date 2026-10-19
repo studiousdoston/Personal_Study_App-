@@ -91,32 +91,43 @@
 }
 
 .actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
   margin-top: var(--space-2);
 }
 
+.actions > :first-child {
+  grid-column: 1 / -1;
+}
+/* phone: the main action gets its own full-width row, the other two share the next one */
+
 .button {
-  flex: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   min-height: var(--tap-target);
-  padding: 0 var(--space-5);
+  padding: var(--space-1) var(--space-3);
   font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
   text-decoration: none;
   border-radius: var(--radius-md);
 }
-/* flex: 1 = on phones the two buttons share the row equally */
+/* a long label like "Quiz needs 4+ cards" wraps onto two lines instead of overflowing */
 
 @media (min-width: 768px) {
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
   .button {
-    flex: none;
+    padding: 0 var(--space-5);
   }
 }
-/* on wider screens they're only as wide as their text */
+/* laptop: one row, each button only as wide as its text */
 
 .primary {
   background: var(--color-primary);

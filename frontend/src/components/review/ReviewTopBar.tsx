@@ -6,9 +6,10 @@ type ReviewTopBarProps = {
   exitTo: string;
   deckName?: string;
   progress?: { done: number; total: number };
+  practice?: boolean;
 };
 
-export function ReviewTopBar({ exitTo, deckName, progress }: ReviewTopBarProps) {
+export function ReviewTopBar({ exitTo, deckName, progress, practice }: ReviewTopBarProps) {
   const percent = progress && progress.total > 0 ? (progress.done / progress.total) * 100 : 0;
 
   return (
@@ -18,6 +19,11 @@ export function ReviewTopBar({ exitTo, deckName, progress }: ReviewTopBarProps) 
           <X size={22} aria-hidden="true" />
         </Link>
         <p className={styles.name}>{deckName}</p>
+        {practice && (
+          <span className={styles.badge} title="Practice doesn't change your review schedule.">
+            Practice
+          </span>
+        )}
         {progress && (
           <p className={styles.count}>
             {progress.done} / {progress.total}

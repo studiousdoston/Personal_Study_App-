@@ -1,6 +1,6 @@
 import { useEffect, useEffectEvent } from "react";
 import type { ReviewExit } from "../../hooks/useReviewExit";
-import { RATING_KEYS, useReviewSession } from "../../hooks/useReviewSession";
+import { RATING_KEYS, type SessionMode, useReviewSession } from "../../hooks/useReviewSession";
 import { getErrorMessage } from "../../services/errors";
 import type { Card } from "../../types/models";
 import { ErrorBox } from "../common/ErrorBox";
@@ -14,6 +14,8 @@ type ReviewSessionProps = {
   exit: ReviewExit;
   deckName?: string;
   cards: Card[];
+  mode?: SessionMode;
+  onRestart?: () => void;
 };
 
 function isTypingTarget(target: EventTarget | null) {
@@ -27,8 +29,15 @@ function isActivatable(target: EventTarget | null) {
   return target instanceof HTMLElement && target.closest("button, a") !== null;
 }
 
-export function ReviewSession({ exit, deckName, cards }: ReviewSessionProps) {
-  const session = useReviewSession(cards);
+export function ReviewSession({
+  exit,
+  deckName,
+  cards,
+  mode = "review",
+  onRestart,
+}: ReviewSessionProps) {
+  const session = useReviewSession(cards, mode);
+  const practice = mode === "practice";
 
   const onKeyDown = useEffectEvent((e: KeyboardEvent) => {
     if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -56,15 +65,25 @@ export function ReviewSession({ exit, deckName, cards }: ReviewSessionProps) {
   if (session.finished) {
     return (
       <div className={styles.page}>
-        <ReviewTopBar exitTo={exit.to} deckName={deckName} progress={session.progress} />
-        <ReviewSummary exit={exit} {...session.summary} />
+        <ReviewTopBar
+          exitTo={exit.to}
+          deckName={deckName}
+          progress={session.progress}
+          practice={practice}
+        />
+        <ReviewSummary mode={mode} exit={exit} onRestart={onRestart} {...session.summary} />
       </div>
     );
   }
 
   return (
     <div className={styles.page}>
-      <ReviewTopBar exitTo={exit.to} deckName={deckName} progress={session.progress} />
+      <ReviewTopBar
+        exitTo={exit.to}
+        deckName={deckName}
+        progress={session.progress}
+        practice={practice}
+      />
 
       <main className={styles.stage}>
         <ReviewCard

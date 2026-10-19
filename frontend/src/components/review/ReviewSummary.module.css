@@ -18,6 +18,11 @@
   width: 100%;
 }
 
+.single {
+  grid-template-columns: 1fr;
+}
+/* practice shows one stat ("7 / 10 remembered"), so it takes the full row */
+
 .stat {
   display: flex;
   flex-direction: column-reverse;
@@ -65,6 +70,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-2);
   min-height: var(--tap-target);
   padding: 0 var(--space-5);
   font-weight: 600;
@@ -83,6 +89,7 @@
 
 .secondary {
   color: var(--color-text);
+  background: transparent;
   border: 1px solid var(--color-border);
 }
 
