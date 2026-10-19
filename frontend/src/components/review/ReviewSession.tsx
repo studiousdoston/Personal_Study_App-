@@ -1,4 +1,5 @@
 import { useEffect, useEffectEvent } from "react";
+import type { ReviewExit } from "../../hooks/useReviewExit";
 import { RATING_KEYS, useReviewSession } from "../../hooks/useReviewSession";
 import { getErrorMessage } from "../../services/errors";
 import type { Card } from "../../types/models";
@@ -10,7 +11,7 @@ import { ReviewTopBar } from "./ReviewTopBar";
 import styles from "./ReviewSession.module.css";
 
 type ReviewSessionProps = {
-  deckId: string;
+  exit: ReviewExit;
   deckName?: string;
   cards: Card[];
 };
@@ -26,7 +27,7 @@ function isActivatable(target: EventTarget | null) {
   return target instanceof HTMLElement && target.closest("button, a") !== null;
 }
 
-export function ReviewSession({ deckId, deckName, cards }: ReviewSessionProps) {
+export function ReviewSession({ exit, deckName, cards }: ReviewSessionProps) {
   const session = useReviewSession(cards);
 
   const onKeyDown = useEffectEvent((e: KeyboardEvent) => {
@@ -55,15 +56,15 @@ export function ReviewSession({ deckId, deckName, cards }: ReviewSessionProps) {
   if (session.finished) {
     return (
       <div className={styles.page}>
-        <ReviewTopBar deckId={deckId} deckName={deckName} progress={session.progress} />
-        <ReviewSummary deckId={deckId} {...session.summary} />
+        <ReviewTopBar exitTo={exit.to} deckName={deckName} progress={session.progress} />
+        <ReviewSummary exit={exit} {...session.summary} />
       </div>
     );
   }
 
   return (
     <div className={styles.page}>
-      <ReviewTopBar deckId={deckId} deckName={deckName} progress={session.progress} />
+      <ReviewTopBar exitTo={exit.to} deckName={deckName} progress={session.progress} />
 
       <main className={styles.stage}>
         <ReviewCard

@@ -13,7 +13,7 @@ const MAX_TIME_TAKEN_MS = 3_600_000;
 type QueueItem = { card: Card; practice: boolean };
 
 function refreshCounts(queryClient: QueryClient) {
-  queryClient.invalidateQueries({ queryKey: ["decks"] });
+  queryClient.invalidateQueries({ queryKey: ["decks"], refetchType: "all" });
   queryClient.invalidateQueries({ queryKey: ["stats"] });
 }
 

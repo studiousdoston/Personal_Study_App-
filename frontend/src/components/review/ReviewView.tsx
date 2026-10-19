@@ -1,5 +1,6 @@
 import { useDeck } from "../../hooks/useDeck";
 import { useDueCards } from "../../hooks/useDueCards";
+import { useReviewExit } from "../../hooks/useReviewExit";
 import { getErrorMessage, isNotFoundError } from "../../services/errors";
 import { ErrorBox } from "../common/ErrorBox";
 import { DeckNotFound } from "../deck/DeckNotFound";
@@ -11,6 +12,7 @@ import styles from "./ReviewView.module.css";
 export function ReviewView({ deckId }: { deckId: string }) {
   const deck = useDeck(deckId);
   const due = useDueCards(deckId);
+  const exit = useReviewExit(deckId);
 
   if (
     (due.isError && isNotFoundError(due.error)) ||
@@ -24,12 +26,12 @@ export function ReviewView({ deckId }: { deckId: string }) {
   }
 
   if (due.isSuccess && due.data.length > 0) {
-    return <ReviewSession deckId={deckId} deckName={deck.data?.name} cards={due.data} />;
+    return <ReviewSession exit={exit} deckName={deck.data?.name} cards={due.data} />;
   }
 
   return (
     <div className={styles.page}>
-      <ReviewTopBar deckId={deckId} deckName={deck.data?.name} />
+      <ReviewTopBar exitTo={exit.to} deckName={deck.data?.name} />
       {due.isPending ? (
         <div className={styles.skeleton} aria-hidden="true" />
       ) : due.isError ? (

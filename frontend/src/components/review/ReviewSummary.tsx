@@ -1,15 +1,16 @@
 import { Link } from "react-router";
+import type { ReviewExit } from "../../hooks/useReviewExit";
 import styles from "./ReviewSummary.module.css";
 
 type ReviewSummaryProps = {
-  deckId: string;
+  exit: ReviewExit;
   cards: number;
   practiceRepeats: number;
   rememberedPercent: number;
 };
 
 export function ReviewSummary({
-  deckId,
+  exit,
   cards,
   practiceRepeats,
   rememberedPercent,
@@ -34,8 +35,8 @@ export function ReviewSummary({
         </p>
       )}
       <div className={styles.actions}>
-        <Link to={`/decks/${deckId}`} className={`${styles.button} ${styles.primary}`}>
-          Back to deck
+        <Link to={exit.to} className={`${styles.button} ${styles.primary}`}>
+          {exit.label}
         </Link>
         <Link to="/" className={`${styles.button} ${styles.secondary}`}>
           Home

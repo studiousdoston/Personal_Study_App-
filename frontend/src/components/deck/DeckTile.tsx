@@ -1,10 +1,7 @@
 import { Link } from "react-router";
 import type { Deck } from "../../types/models";
+import { firstChar } from "../../utils/firstChar";
 import styles from "./DeckTile.module.css";
-
-function firstChar(name: string) {
-  return Array.from(name.trim())[0]?.toUpperCase() ?? "?";
-}
 
 type TileStatus = "due" | "done" | "empty";
 
