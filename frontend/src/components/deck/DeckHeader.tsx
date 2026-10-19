@@ -8,6 +8,7 @@ import { getErrorMessage } from "../../services/errors";
 import { ConfirmDialog } from "../common/ConfirmDialog";
 import { DeckFormDialog } from "./DeckFormDialog";
 import { QUIZ_MIN_CARDS } from "../../constants";
+import { plural, pluralWord } from "../../utils/plural";
 
 export function DeckHeader({ deck }: { deck: Deck }) {
   const canStudy = deck.due_count > 0;
@@ -96,7 +97,7 @@ export function DeckHeader({ deck }: { deck: Deck }) {
           <strong>{deck.due_count}</strong> due
         </li>
         <li className={styles.chip}>
-          <strong>{deck.card_count}</strong> {deck.card_count === 1 ? "card" : "cards"}
+          <strong>{deck.card_count}</strong> {pluralWord(deck.card_count, "card")}
         </li>
         <li className={styles.chip}>
           Mastery <strong>{deck.mastery}%</strong>
@@ -126,9 +127,7 @@ export function DeckHeader({ deck }: { deck: Deck }) {
           if (!open) deleteMutation.reset();
         }}
         title={`Delete “${deck.name}”?`}
-        description={`The deck and its ${deck.card_count} ${
-          deck.card_count === 1 ? "card" : "cards"
-        } will disappear from your decks and study sessions. Your review history is kept, so your stats stay accurate.`}
+        description={`The deck and its ${plural(deck.card_count, "card")} will disappear from your decks and study sessions. Your review history is kept, so your stats stay accurate.`}
         confirmLabel="Delete deck"
         onConfirm={() => deleteMutation.mutateAsync(deck.id)}
         error={deleteMutation.isError ? getErrorMessage(deleteMutation.error) : undefined}

@@ -30,6 +30,11 @@
   text-decoration: none;
 }
 
+.logo {
+  display: block;
+  border-radius: var(--radius-sm);
+}
+
 .actions {
   display: flex;
   align-items: center;

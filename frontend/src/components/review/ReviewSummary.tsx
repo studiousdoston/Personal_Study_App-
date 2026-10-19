@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Shuffle } from "lucide-react";
 import type { ReviewExit } from "../../hooks/useReviewExit";
 import type { SessionMode } from "../../hooks/useReviewSession";
+import { plural } from "../../utils/plural";
 import styles from "./ReviewSummary.module.css";
 
 type ReviewSummaryProps = {
@@ -54,8 +55,8 @@ export function ReviewSummary({
       ) : (
         practiceRepeats > 0 && (
           <p className={styles.note}>
-            Plus {practiceRepeats} practice {practiceRepeats === 1 ? "repeat" : "repeats"} of cards
-            you rated Again. Those don't count toward your stats.
+            Plus {plural(practiceRepeats, "practice repeat")} of cards you rated Again. Those don't
+            count toward your stats.
           </p>
         )
       )}

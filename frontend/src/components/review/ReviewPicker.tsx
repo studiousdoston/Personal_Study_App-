@@ -3,13 +3,10 @@ import { Play } from "lucide-react";
 import { useDecks } from "../../hooks/useDecks";
 import { REVIEW_PICKER_PATH } from "../../hooks/useReviewExit";
 import { getErrorMessage } from "../../services/errors";
+import { pluralWord } from "../../utils/plural";
 import { ErrorBox } from "../common/ErrorBox";
 import { ReviewPickerRow } from "./ReviewPickerRow";
 import styles from "./ReviewPicker.module.css";
-
-function plural(count: number, word: string) {
-  return `${word}${count === 1 ? "" : "s"}`;
-}
 
 export function ReviewPicker() {
   const { data: decks, isPending, isError, error, refetch } = useDecks();
@@ -26,8 +23,8 @@ export function ReviewPicker() {
         <h1 className={styles.title}>Review</h1>
         {decks && dueDecks.length > 0 && (
           <p className={styles.subtitle}>
-            <span className={styles.highlight}>{totalDue}</span> {plural(totalDue, "card")} due
-            across {dueDecks.length} {plural(dueDecks.length, "deck")}
+            <span className={styles.highlight}>{totalDue}</span> {pluralWord(totalDue, "card")} due
+            across {dueDecks.length} {pluralWord(dueDecks.length, "deck")}
           </p>
         )}
       </header>

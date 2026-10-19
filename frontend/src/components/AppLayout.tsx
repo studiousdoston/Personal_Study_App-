@@ -1,7 +1,8 @@
 import { NavLink, Outlet, useLocation } from "react-router";
-import { BookOpen, Flame, Layers, LogOut, RotateCcw } from "lucide-react";
+import { Flame, Layers, LogOut, RotateCcw } from "lucide-react";
 import { useAuth } from "../context/useAuth";
 import { useStats } from "../hooks/useStats";
+import { plural } from "../utils/plural";
 import styles from "./AppLayout.module.css";
 
 function navClass({ isActive }: { isActive: boolean }) {
@@ -18,7 +19,7 @@ export default function AppLayout() {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <NavLink to="/" className={styles.brand}>
-            <BookOpen size={22} aria-hidden="true" />
+            <img src="/favicon.svg" alt="" width={28} height={28} className={styles.logo} />
             <span>BrainMaxx</span>
           </NavLink>
           {/* logo + name, links back to Home */}
@@ -27,7 +28,7 @@ export default function AppLayout() {
             {stats && (
               <span className={styles.streak}>
                 <Flame size={16} aria-hidden="true" />
-                {stats.streak_days} days
+                {plural(stats.streak_days, "day")}
               </span>
             )}
             {/* streak badge, only shown once stats have loaded */}

@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import type { Deck } from "../../types/models";
 import { firstChar } from "../../utils/firstChar";
+import { plural } from "../../utils/plural";
 import styles from "./DeckTile.module.css";
 
 type TileStatus = "due" | "done" | "empty";
@@ -19,9 +20,7 @@ const PILL_TEXT: Record<TileStatus, (deck: Deck) => string> = {
 export function DeckTile({ deck }: { deck: Deck }) {
   const status = getStatus(deck);
   const countText =
-    deck.card_count === 0
-      ? "No cards yet"
-      : `${deck.card_count} ${deck.card_count === 1 ? "card" : "cards"} total`;
+    deck.card_count === 0 ? "No cards yet" : `${plural(deck.card_count, "card")} total`;
 
   return (
     <Link to={`/decks/${deck.id}`} className={`${styles.tile} ${styles[status]}`}>

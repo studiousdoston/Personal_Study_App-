@@ -5,6 +5,7 @@ import { useDecks } from "../hooks/useDecks";
 import { StatTiles } from "../components/stats/StatTiles";
 import { DeckGrid } from "../components/deck/DeckGrid";
 import { DeckFormDialog } from "../components/deck/DeckFormDialog";
+import { pluralWord } from "../utils/plural";
 import styles from "./HomePage.module.css";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, {
@@ -29,7 +30,7 @@ export function HomePage() {
           (stats.cards_due > 0 ? (
             <p className={styles.subtitle}>
               You have <span className={styles.highlight}>{stats.cards_due}</span>{" "}
-              {stats.cards_due === 1 ? "card" : "cards"} due today.
+              {pluralWord(stats.cards_due, "card")} due today.
             </p>
           ) : (
             <p className={styles.subtitle}>All caught up for today.</p>
