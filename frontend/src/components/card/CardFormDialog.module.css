@@ -1,0 +1,143 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgb(0 0 0 / 0.45);
+  animation: fadeIn 150ms ease-out;
+}
+
+.content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 21;
+  transform: translate(-50%, -50%);
+  width: calc(100% - var(--space-6));
+  max-width: 480px;
+  max-height: 90dvh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+  animation: popIn 150ms ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.textarea {
+  min-height: 96px;
+  padding: var(--space-3) var(--space-4);
+  font-size: 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.error {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--space-2);
+}
+/* phone: buttons stacked full width, primary on top (column-reverse),
+   because three buttons don't fit in one row on a narrow dialog */
+
+@media (min-width: 480px) {
+  .actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+
+.primary,
+.secondary {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+}
+
+.primary {
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border: none;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.secondary {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.primary:disabled,
+.secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

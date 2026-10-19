@@ -1,0 +1,160 @@
+import * as Dialog from "@radix-ui/react-dialog";
+import { useId, useRef, useState } from "react";
+import { useCreateCard } from "../../hooks/useCreateCard";
+import { useUpdateCard } from "../../hooks/useUpdateCard";
+import { getErrorMessage } from "../../services/errors";
+import type { Card, CardUpdate } from "../../types/models";
+import styles from "./CardFormDialog.module.css";
+
+type CardFormDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  deckId: string;
+  card?: Card;
+};
+
+export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDialogProps) {
+  const isEdit = card !== undefined;
+  const [front, setFront] = useState(card?.front ?? "");
+  const [back, setBack] = useState(card?.back ?? "");
+  const createMutation = useCreateCard(deckId);
+  const updateMutation = useUpdateCard();
+  const mutation = isEdit ? updateMutation : createMutation;
+  const frontRef = useRef<HTMLTextAreaElement>(null);
+  const frontId = useId();
+  const backId = useId();
+
+  function close() {
+    setFront(card?.front ?? "");
+    setBack(card?.back ?? "");
+    mutation.reset();
+    onOpenChange(false);
+  }
+
+  function handleOpenChange(next: boolean) {
+    if (next) {
+      onOpenChange(true);
+      return;
+    }
+    if (mutation.isPending) return;
+    close();
+  }
+
+  async function save(addAnother: boolean) {
+    if (!canSubmit) return;
+    const data = { front: front.trim(), back: back.trim() };
+    try {
+      if (isEdit) {
+        const changes: CardUpdate = {};
+        if (data.front !== card.front) changes.front = data.front;
+        if (data.back !== card.back) changes.back = data.back;
+        if (Object.keys(changes).length > 0) {
+          await updateMutation.mutateAsync({ cardId: card.id, data: changes });
+        }
+      } else {
+        await createMutation.mutateAsync(data);
+      }
+    } catch {
+      return;
+    }
+    if (addAnother) {
+      setFront("");
+      setBack("");
+      frontRef.current?.focus();
+      return;
+    }
+    close();
+  }
+
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    void save(false);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      e.currentTarget.form?.requestSubmit();
+    }
+  }
+
+  const canSubmit = front.trim() !== "" && back.trim() !== "" && !mutation.isPending;
+
+  return (
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
+      <Dialog.Portal>
+        <Dialog.Overlay className={styles.overlay} />
+        <Dialog.Content className={styles.content}>
+          <header className={styles.header}>
+            <Dialog.Title className={styles.title}>
+              {isEdit ? "Edit card" : "Add card"}
+            </Dialog.Title>
+            <Dialog.Description className={styles.subtitle}>
+              {isEdit
+                ? "Change the question or the answer."
+                : "Put the question on the front and the answer on the back."}
+            </Dialog.Description>
+          </header>
+
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <div className={styles.field}>
+              <label htmlFor={frontId} className={styles.label}>
+                Front
+              </label>
+              <textarea
+                ref={frontRef}
+                id={frontId}
+                className={styles.textarea}
+                value={front}
+                onChange={(e) => setFront(e.target.value)}
+                onKeyDown={handleKeyDown}
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label htmlFor={backId} className={styles.label}>
+                Back
+              </label>
+              <textarea
+                id={backId}
+                className={styles.textarea}
+                value={back}
+                onChange={(e) => setBack(e.target.value)}
+                onKeyDown={handleKeyDown}
+                required
+              />
+            </div>
+
+            {mutation.isError && (
+              <p role="alert" className={styles.error}>
+                {getErrorMessage(mutation.error)}
+              </p>
+            )}
+
+            <div className={styles.actions}>
+              <Dialog.Close asChild>
+                <button type="button" className={styles.secondary} disabled={mutation.isPending}>
+                  Cancel
+                </button>
+              </Dialog.Close>
+              {!isEdit && (
+                <button
+                  type="button"
+                  className={styles.secondary}
+                  disabled={!canSubmit}
+                  onClick={() => save(true)}
+                >
+                  Save and add another
+                </button>
+              )}
+              <button type="submit" className={styles.primary} disabled={!canSubmit}>
+                {mutation.isPending ? "Saving..." : isEdit ? "Save changes" : "Save"}
+              </button>
+            </div>
+          </form>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}

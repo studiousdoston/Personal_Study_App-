@@ -3,7 +3,7 @@ import { listCards } from "../services/card.service";
 
 export function useCards(deckId: string) {
   return useQuery({
-    queryKey: ["deck", deckId, "cards"],
+    queryKey: ["decks", deckId, "cards"],
     queryFn: () => listCards(deckId),
   });
 }

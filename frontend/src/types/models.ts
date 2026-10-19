@@ -6,3 +6,5 @@ export type Deck = components["schemas"]["DeckOut"];
 export type Card = components["schemas"]["CardOut"];
 export type Stats = components["schemas"]["StatsOut"];
 export type DeckCreate = components["schemas"]["DeckCreate"];
+export type CardCreate = components["schemas"]["CardCreate"];
+export type CardUpdate = components["schemas"]["CardUpdate"];

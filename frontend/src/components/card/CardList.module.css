@@ -7,19 +7,26 @@
 }
 
 .row {
-  position: relative;
-  display: grid;
+  display: flex;
+  align-items: flex-start;
   gap: var(--space-3);
   padding: var(--space-4);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
 }
-/* phone: front on top, back below (one column).
-   position: relative so the Due pill can sit in the corner */
+/* row = text on the left, action buttons on the right */
+
+.content {
+  flex: 1;
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+/* phone: front on top, back below (one column) */
 
 @media (min-width: 768px) {
-  .row {
+  .content {
     grid-template-columns: 1fr 1fr;
     gap: var(--space-5);
   }
@@ -33,6 +40,12 @@
   min-width: 0;
 }
 /* min-width: 0 lets long words wrap inside the column instead of stretching it */
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 
 .label {
   font-size: var(--font-size-xs);
@@ -59,19 +72,45 @@
 }
 
 .due {
-  position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
-  padding: 2px var(--space-2);
+  padding: 0 var(--space-2);
   font-size: var(--font-size-xs);
   font-weight: 700;
   color: var(--color-primary-text);
   background: var(--color-primary-soft);
   border-radius: var(--radius-pill);
 }
-/* small green pill in the top-right corner of a due card */
+/* small green pill next to the FRONT label, so it never collides with the buttons */
+
+.actions {
+  display: flex;
+  gap: var(--space-1);
+  margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-2)) 0 0;
+}
+/* holds Edit now and Delete in 5c. The negative margin pulls the 48px buttons
+   into the row padding so the icons line up with the corner */
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+}
+
+.iconButton:hover {
+  color: var(--color-text);
+  background: var(--color-surface-raised);
+}
 
 .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
   padding: var(--space-6) var(--space-4);
   text-align: center;
   color: var(--color-text-muted);
@@ -79,3 +118,20 @@
   border-radius: var(--radius-lg);
 }
 /* dashed box, the same "empty slot" look as the Create deck tile */
+
+.addFirst {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  font-weight: 600;
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+}
+
+.addFirst:hover {
+  background: var(--color-primary-hover);
+}

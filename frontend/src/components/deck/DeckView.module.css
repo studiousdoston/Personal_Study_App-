@@ -66,3 +66,22 @@
   border-radius: var(--radius-pill);
 }
 /* the same small count badge as "Your decks (4)" on Home */
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  font-weight: 600;
+  color: var(--color-primary-contrast);
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+}
+
+.addButton:hover {
+  background: var(--color-primary-hover);
+}
+/* margin-left: auto pushes the button to the right end of the "Cards (n)" row */

@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 
 import { useCards } from "../../hooks/useCards";
 import { useDeck } from "../../hooks/useDeck";
@@ -8,12 +9,18 @@ import { DeckHeader } from "./DeckHeader";
 import { DeckNotFound } from "./DeckNotFound";
 import { CardList } from "../card/CardList";
 import { CardListSkeleton } from "../card/CardListSkeleton";
+import { CardFormDialog } from "../card/CardFormDialog";
 import { ErrorBox } from "../common/ErrorBox";
 import { getErrorMessage, isNotFoundError } from "../../services/errors";
+import type { Card } from "../../types/models";
+
+type CardDialogState = { mode: "closed" } | { mode: "add" } | { mode: "edit"; card: Card };
 
 export function DeckView({ deckId }: { deckId: string }) {
   const deck = useDeck(deckId);
   const cards = useCards(deckId);
+  const [dialog, setDialog] = useState<CardDialogState>({ mode: "closed" });
+  const editingCard = dialog.mode === "edit" ? dialog.card : undefined;
 
   if (deck.isError && isNotFoundError(deck.error)) {
     return <DeckNotFound />;
@@ -37,15 +44,36 @@ export function DeckView({ deckId }: { deckId: string }) {
             Cards
           </h2>
           {cards.data && <span className={styles.count}>{cards.data.length}</span>}
+          <button
+            type="button"
+            className={styles.addButton}
+            onClick={() => setDialog({ mode: "add" })}
+          >
+            <Plus size={18} aria-hidden="true" />
+            Add card
+          </button>
         </div>
         {cards.isPending ? (
           <CardListSkeleton />
         ) : cards.isError ? (
           <ErrorBox message={getErrorMessage(cards.error)} onRetry={() => cards.refetch()} />
         ) : (
-          <CardList cards={cards.data} />
+          <CardList
+            cards={cards.data}
+            onEdit={(card) => setDialog({ mode: "edit", card })}
+            onAdd={() => setDialog({ mode: "add" })}
+          />
         )}
       </section>
+      <CardFormDialog
+        key={editingCard?.id ?? "new"}
+        open={dialog.mode !== "closed"}
+        onOpenChange={(open) => {
+          if (!open) setDialog({ mode: "closed" });
+        }}
+        deckId={deckId}
+        card={editingCard}
+      />
     </div>
   );
 }
