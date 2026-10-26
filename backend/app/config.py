@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 15
     cookie_secure: bool = False
     cors_origins: list[str] = ["http://localhost:5173"]
-
+    cookie_path: str = "/auth"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
