@@ -71,7 +71,6 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  margin-left: auto;
   min-height: var(--tap-target);
   padding: 0 var(--space-4);
   font-weight: 600;
@@ -84,7 +83,43 @@
 .addButton:hover {
   background: var(--color-primary-hover);
 }
-/* margin-left: auto pushes the button to the right end of the "Cards (n)" row */
+
+.aiButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-left: auto;
+  min-width: var(--tap-target);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-3);
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.aiButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+.aiLabel {
+  display: none;
+}
+
+@media (min-width: 560px) {
+  .aiButton {
+    padding: 0 var(--space-4);
+  }
+
+  .aiLabel {
+    display: inline;
+  }
+}
+/* margin-left: auto on the first button pushes both buttons to the right end of the
+   "Cards (n)" row; narrow phones show the AI button as an icon only */
 
 .noMatch {
   display: flex;

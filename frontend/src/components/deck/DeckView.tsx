@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, Sparkles } from "lucide-react";
 
 import { useCards } from "../../hooks/useCards";
 import { useDeck } from "../../hooks/useDeck";
@@ -57,6 +57,14 @@ export function DeckView({ deckId }: { deckId: string }) {
             Cards
           </h2>
           {cards.data && <span className={styles.count}>{cards.data.length}</span>}
+          <Link
+            to={`/generate?deck=${deckId}`}
+            className={styles.aiButton}
+            aria-label="Generate with AI"
+          >
+            <Sparkles size={18} aria-hidden="true" />
+            <span className={styles.aiLabel}>Generate with AI</span>
+          </Link>
           <button
             type="button"
             className={styles.addButton}

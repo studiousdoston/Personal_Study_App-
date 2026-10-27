@@ -2,6 +2,8 @@ import { createBrowserRouter, Navigate } from "react-router";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
 import { DeckPage } from "./pages/DeckPage";
+import { GeneratePage } from "./pages/GeneratePage";
+import { GenerationPage } from "./pages/GenerationPage";
 import { PracticePage } from "./pages/PracticePage";
 import { QuizPage } from "./pages/QuizPage";
 import { ReviewPage } from "./pages/ReviewPage";
@@ -21,6 +23,8 @@ export const router = createBrowserRouter([
           { path: "/", element: <HomePage /> },
           { path: `/decks/:deckId`, element: <DeckPage /> },
           { path: "/review", element: <ReviewPickerPage /> },
+          { path: "/generate", element: <GeneratePage /> },
+          { path: "/generations/:generationId", element: <GenerationPage /> },
         ],
       },
       { path: "/decks/:deckId/review", element: <ReviewPage /> },

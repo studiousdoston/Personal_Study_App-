@@ -15,7 +15,7 @@ from app.database import engine, get_db
 from app.dependencies import get_current_user
 from app.main import app
 from app.models import Card, CardDraft, Deck, Generation, User
-from app.schemas.ai import DraftCard, GenerateCardsRequest
+from app.schemas.ai import DraftCard, GenerateCardsRequest, GenerationOptions
 from app.services import ai_service, card_service, generation_service
 
 
@@ -120,7 +120,10 @@ def _raises(monkeypatch: pytest.MonkeyPatch, error: Exception) -> None:
 
 def _job(db: Session, user: User, deck: Deck, **fields) -> Generation:
     generation = Generation(
-        user_id=user.id, deck_id=deck.id, request=_body(), **{"status": "queued", **fields}
+        user_id=user.id,
+        deck_id=deck.id,
+        request=GenerationOptions.model_validate(_body()).model_dump(mode="json"),
+        **{"status": "queued", **fields},
     )
     db.add(generation)
     db.flush()
@@ -134,6 +137,7 @@ def test_post_queues_then_job_finishes_with_drafts(client: TestClient, deck: Dec
     created = _start(client, deck, count=3, instructions="short")
 
     assert created["status"] == "queued"
+    assert (created["mode"], created["count"], created["instructions"]) == ("qa", 3, "short")
     assert created["drafts"] == []
     assert (created["progress_done"], created["progress_total"]) == (0, 1)
 
@@ -251,6 +255,8 @@ def test_list_shows_own_jobs_newest_first_with_draft_count(
     rows = [(row["id"], row["draft_count"]) for row in response.json()]
     assert rows == [(str(newer.id), 0), (str(older.id), 3)]
     assert "drafts" not in response.json()[0]
+    assert "request" not in response.json()[0]
+    assert response.json()[0]["mode"] == "qa"
 
 
 ##########################################################

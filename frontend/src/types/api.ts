@@ -248,6 +248,110 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/decks/{deck_id}/generations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Generation */
+        post: operations["create_generation_decks__deck_id__generations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/generations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Generations */
+        get: operations["list_generations_generations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/generations/{generation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Generation */
+        get: operations["get_generation_generations__generation_id__get"];
+        put?: never;
+        post?: never;
+        /** Delete Generation */
+        delete: operations["delete_generation_generations__generation_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/generations/{generation_id}/refine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Refine Generation */
+        post: operations["refine_generation_generations__generation_id__refine_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/generations/{generation_id}/save": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Save Generation */
+        post: operations["save_generation_generations__generation_id__save_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/drafts/{draft_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Draft */
+        delete: operations["delete_draft_drafts__draft_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Draft */
+        patch: operations["update_draft_drafts__draft_id__patch"];
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -275,6 +379,26 @@ export interface components {
             front: string;
             /** Back */
             back: string;
+        };
+        /** CardDraftOut */
+        CardDraftOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Front */
+            front: string;
+            /** Back */
+            back: string;
+            /** Position */
+            position: number;
+            /** Is Duplicate */
+            is_duplicate: boolean;
+            /** Included */
+            included: boolean;
+            /** Edited */
+            edited: boolean;
         };
         /** CardOut */
         CardOut: {
@@ -381,6 +505,120 @@ export interface components {
             /** Icon */
             icon?: ("book-open" | "graduation-cap" | "brain" | "pen-line" | "languages" | "globe" | "landmark" | "music" | "palette" | "code" | "database" | "flask-conical" | "atom" | "dna" | "heart-pulse" | "calculator" | "sigma" | "chart-line" | "briefcase" | "scale" | "camera" | "dumbbell" | "chef-hat" | "plane") | null;
         };
+        /** DraftUpdate */
+        DraftUpdate: {
+            /** Front */
+            front?: string | null;
+            /** Back */
+            back?: string | null;
+            /** Included */
+            included?: boolean | null;
+        };
+        /** GenerationOptions */
+        GenerationOptions: {
+            /** Sources */
+            sources: components["schemas"]["TextSource"][];
+            /**
+             * Mode
+             * @enum {string}
+             */
+            mode: "qa" | "vocab";
+            /**
+             * Count
+             * @default 10
+             */
+            count: number;
+            /** Instructions */
+            instructions?: string | null;
+        };
+        /** GenerationOut */
+        GenerationOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Deck Id
+             * Format: uuid
+             */
+            deck_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "done" | "failed";
+            /** Progress Done */
+            progress_done: number;
+            /** Progress Total */
+            progress_total: number;
+            /** Error Message */
+            error_message: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            /** Drafts */
+            drafts: components["schemas"]["CardDraftOut"][];
+            /** Refines Left */
+            readonly refines_left: number;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            readonly mode: "qa" | "vocab";
+            /** Count */
+            readonly count: number;
+            /** Instructions */
+            readonly instructions: string | null;
+        };
+        /** GenerationSummary */
+        GenerationSummary: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Deck Id
+             * Format: uuid
+             */
+            deck_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "done" | "failed";
+            /** Progress Done */
+            progress_done: number;
+            /** Progress Total */
+            progress_total: number;
+            /** Error Message */
+            error_message: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            /** Draft Count */
+            draft_count: number;
+            /** Refines Left */
+            readonly refines_left: number;
+            /**
+             * Mode
+             * @enum {string}
+             */
+            readonly mode: "qa" | "vocab";
+            /** Count */
+            readonly count: number;
+            /** Instructions */
+            readonly instructions: string | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -425,6 +663,11 @@ export interface components {
             /** Options */
             options: components["schemas"]["QuizOption"][];
         };
+        /** RefineRequest */
+        RefineRequest: {
+            /** Instructions */
+            instructions?: string | null;
+        };
         /** RegisterRequest */
         RegisterRequest: {
             /**
@@ -447,6 +690,16 @@ export interface components {
             /** Time Taken Ms */
             time_taken_ms?: number | null;
         };
+        /** SaveResult */
+        SaveResult: {
+            /**
+             * Deck Id
+             * Format: uuid
+             */
+            deck_id: string;
+            /** Saved Count */
+            saved_count: number;
+        };
         /** StatsOut */
         StatsOut: {
             /** Cards Due */
@@ -457,6 +710,16 @@ export interface components {
             streak_days: number;
             /** Accuracy 30D */
             accuracy_30d: number | null;
+        };
+        /** TextSource */
+        TextSource: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            type: "text";
+            /** Text */
+            text: string;
         };
         /** TokenResponse */
         TokenResponse: {
@@ -1104,6 +1367,251 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StatsOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_generation_decks__deck_id__generations_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deck_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GenerationOptions"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_generations_generations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerationSummary"][];
+                };
+            };
+        };
+    };
+    get_generation_generations__generation_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                generation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_generation_generations__generation_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                generation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refine_generation_generations__generation_id__refine_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                generation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefineRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GenerationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    save_generation_generations__generation_id__save_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                generation_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SaveResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_draft_drafts__draft_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                draft_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_draft_drafts__draft_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                draft_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DraftUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CardDraftOut"];
                 };
             };
             /** @description Validation Error */

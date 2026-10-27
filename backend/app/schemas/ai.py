@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import Annotated, Literal, Union
+from typing import Annotated, Any, Literal, Union
 
 from pydantic import (
     AfterValidator,
@@ -112,6 +112,7 @@ class GenerationBase(BaseModel):
     progress_done: int
     progress_total: int
     run_count: int = Field(exclude=True)
+    request: dict[str, Any] = Field(exclude=True)
     error_message: str | None
     created_at: datetime
     finished_at: datetime | None
@@ -120,6 +121,21 @@ class GenerationBase(BaseModel):
     @property
     def refines_left(self) -> int:
         return max(0, MAX_REFINES - max(self.run_count - 1, 0))
+
+    @computed_field
+    @property
+    def mode(self) -> Literal["qa", "vocab"]:
+        return self.request["mode"]
+
+    @computed_field
+    @property
+    def count(self) -> int:
+        return self.request["count"]
+
+    @computed_field
+    @property
+    def instructions(self) -> str | None:
+        return self.request.get("instructions")
 
 
 class GenerationOut(GenerationBase):

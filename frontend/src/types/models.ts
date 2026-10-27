@@ -15,3 +15,6 @@ export type DeckUpdate = components["schemas"]["DeckUpdate"];
 export type ReviewCreate = components["schemas"]["ReviewCreate"];
 export type Quiz = components["schemas"]["QuizOut"];
 export type QuizQuestion = components["schemas"]["QuizQuestion"];
+export type GenerationCreate = components["schemas"]["GenerationOptions"];
+export type GenerationMode = GenerationCreate["mode"];
+export type Generation = components["schemas"]["GenerationOut"];

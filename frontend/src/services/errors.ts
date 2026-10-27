@@ -24,3 +24,7 @@ export function isNotEnoughCardsError(err: unknown): boolean {
     typeof err.response.data?.detail === "string"
   );
 }
+
+export function hasStatus(err: unknown, status: number): boolean {
+  return isAxiosError(err) && err.response?.status === status;
+}

@@ -1,0 +1,25 @@
+.spinner {
+  flex-shrink: 0;
+  display: inline-block;
+  width: var(--spinner-size);
+  height: var(--spinner-size);
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+/* currentColor = takes the text color of the button or panel it sits in */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+/* the global reduced-motion rule would make an infinite spin flicker; a static ring is calmer */

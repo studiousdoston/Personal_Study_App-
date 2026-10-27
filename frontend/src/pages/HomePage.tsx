@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Link } from "react-router";
+import { Plus, Sparkles } from "lucide-react";
 import { useStats } from "../hooks/useStats";
 import { useDecks } from "../hooks/useDecks";
 import { StatTiles } from "../components/stats/StatTiles";
@@ -48,10 +49,16 @@ export function HomePage() {
             </h2>
             {decks && <span className={styles.count}>{decks.length}</span>}
           </div>
-          <button type="button" className={styles.newButton} onClick={() => setNewDeckOpen(true)}>
-            <Plus size={18} aria-hidden="true" />
-            New deck
-          </button>
+          <div className={styles.headerActions}>
+            <Link to="/generate" className={styles.aiButton} aria-label="Generate with AI">
+              <Sparkles size={18} aria-hidden="true" />
+              <span className={styles.aiLabel}>Generate with AI</span>
+            </Link>
+            <button type="button" className={styles.newButton} onClick={() => setNewDeckOpen(true)}>
+              <Plus size={18} aria-hidden="true" />
+              New deck
+            </button>
+          </div>
         </div>
 
         <DeckGrid onCreate={() => setNewDeckOpen(true)} />

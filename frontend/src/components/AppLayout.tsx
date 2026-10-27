@@ -15,7 +15,11 @@ export default function AppLayout() {
   const { data: stats } = useStats();
   const { pathname } = useLocation();
   useVisualViewportHeight();
-  const inDecks = pathname === "/" || pathname.startsWith("/decks");
+  const inDecks =
+    pathname === "/" ||
+    pathname.startsWith("/decks") ||
+    pathname === "/generate" ||
+    pathname.startsWith("/generations");
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
