@@ -1,0 +1,40 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(var(--tap-target), 1fr));
+  column-gap: max(0px, min(var(--space-2), (100% - 6 * var(--tap-target)) / 5));
+  row-gap: var(--space-1);
+  margin-inline: calc(-1 * var(--space-2));
+}
+
+.item {
+  display: grid;
+  place-items: center;
+  min-height: var(--tap-target);
+  aspect-ratio: 1;
+  padding: 0;
+  color: color-mix(in srgb, var(--color-text) 60%, var(--color-text-muted));
+  background: transparent;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.item:hover {
+  background: var(--color-surface);
+}
+
+.item[data-state="checked"] {
+  color: var(--deck-color);
+  background: color-mix(in srgb, var(--deck-color) 15%, transparent);
+  border-color: var(--deck-color);
+}

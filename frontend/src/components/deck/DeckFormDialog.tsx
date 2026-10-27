@@ -1,12 +1,20 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useId, useState } from "react";
+import {
+  DEFAULT_DECK_COLOR,
+  DEFAULT_DECK_ICON,
+  type DeckColor,
+  type DeckIcon,
+} from "../../constants";
 import { useCreateDeck } from "../../hooks/useCreateDeck";
 import { useUpdateDeck } from "../../hooks/useUpdateDeck";
 import { getErrorMessage } from "../../services/errors";
 import type { Deck, DeckUpdate } from "../../types/models";
 import { scrollFieldIntoView } from "../../utils/scrollFieldIntoView";
 import dialog from "../common/Dialog.module.css";
+import { DeckColorPicker } from "./DeckColorPicker";
 import styles from "./DeckFormDialog.module.css";
+import { DeckIconPicker } from "./DeckIconPicker";
 
 type DeckFormDialogProps = {
   open: boolean;
@@ -18,6 +26,8 @@ export function DeckFormDialog({ open, onOpenChange, deck }: DeckFormDialogProps
   const isEdit = deck !== undefined;
   const [name, setName] = useState(deck?.name ?? "");
   const [description, setDescription] = useState(deck?.description ?? "");
+  const [color, setColor] = useState<DeckColor>(deck?.color ?? DEFAULT_DECK_COLOR);
+  const [icon, setIcon] = useState<DeckIcon>(deck?.icon ?? DEFAULT_DECK_ICON);
   const createMutation = useCreateDeck();
   const updateMutation = useUpdateDeck();
   const mutation = isEdit ? updateMutation : createMutation;
@@ -27,6 +37,8 @@ export function DeckFormDialog({ open, onOpenChange, deck }: DeckFormDialogProps
   function close() {
     setName(deck?.name ?? "");
     setDescription(deck?.description ?? "");
+    setColor(deck?.color ?? DEFAULT_DECK_COLOR);
+    setIcon(deck?.icon ?? DEFAULT_DECK_ICON);
     mutation.reset();
     onOpenChange(false);
   }
@@ -43,12 +55,14 @@ export function DeckFormDialog({ open, onOpenChange, deck }: DeckFormDialogProps
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!canSubmit) return;
-    const data = { name: name.trim(), description: description.trim() || null };
+    const data = { name: name.trim(), description: description.trim() || null, color, icon };
     try {
       if (isEdit) {
         const changes: DeckUpdate = {};
         if (data.name !== deck.name) changes.name = data.name;
         if (data.description !== deck.description) changes.description = data.description;
+        if (data.color !== deck.color) changes.color = data.color;
+        if (data.icon !== deck.icon) changes.icon = data.icon;
         if (Object.keys(changes).length > 0) {
           await updateMutation.mutateAsync({ deckId: deck.id, data: changes });
         }
@@ -77,7 +91,7 @@ export function DeckFormDialog({ open, onOpenChange, deck }: DeckFormDialogProps
             </Dialog.Title>
             <Dialog.Description className={styles.subtitle}>
               {isEdit
-                ? "Rename the deck or change its description."
+                ? "Change its name, description, color or icon."
                 : "Give it a name. You can add cards next."}
             </Dialog.Description>
           </header>
@@ -108,6 +122,9 @@ export function DeckFormDialog({ open, onOpenChange, deck }: DeckFormDialogProps
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
+
+            <DeckColorPicker value={color} onChange={setColor} />
+            <DeckIconPicker value={icon} color={color} onChange={setIcon} />
 
             {mutation.isError && (
               <p role="alert" className={styles.error}>

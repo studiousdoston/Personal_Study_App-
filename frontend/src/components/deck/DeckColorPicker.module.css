@@ -1,0 +1,53 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: calc((var(--tap-target) - 32px) / 2);
+}
+
+.swatch {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--color-bg);
+  background: var(--swatch);
+  border: none;
+  border-radius: var(--radius-pill);
+}
+
+.swatch::before {
+  content: "";
+  position: absolute;
+  inset: calc((32px - var(--tap-target)) / 2);
+  border-radius: var(--radius-pill);
+}
+
+.swatch[data-state="checked"] {
+  box-shadow:
+    0 0 0 2px var(--color-surface-raised),
+    0 0 0 4px var(--swatch);
+}
+
+.swatch:focus-visible {
+  outline-offset: 6px;
+}
+
+.indicator {
+  display: grid;
+  place-items: center;
+}
