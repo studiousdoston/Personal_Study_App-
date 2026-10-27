@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import NamedTuple
 
 from sqlalchemy import func, select
@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 
 from app.models import Card, Deck
 from app.schemas.deck import DeckCreate, DeckOut, DeckUpdate
-
 
 MASTERY_INTERVAL_DAYS = 21
 
@@ -63,7 +62,7 @@ def update_deck(
 
 def delete_deck(db: Session, user_id: uuid.UUID, deck_id: uuid.UUID) -> None:
     deck = _get_active_deck(db, user_id, deck_id)
-    deck.deleted_at = datetime.now(timezone.utc)
+    deck.deleted_at = datetime.now(UTC)
     db.commit()
 
 
@@ -92,7 +91,7 @@ def _get_active_deck(db: Session, user_id: uuid.UUID, deck_id: uuid.UUID) -> Dec
 def _deck_stats(db: Session, deck_ids: list[uuid.UUID]) -> dict[uuid.UUID, _DeckStats]:
     if not deck_ids:
         return {}
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     rows = db.execute(
         select(
             Card.deck_id,

@@ -12,7 +12,6 @@ from pydantic import (
     field_validator,
 )
 
-
 DeckColor = Literal["green", "blue", "purple", "rose", "amber", "slate"]
 DeckIcon = Literal[
     "book-open",
