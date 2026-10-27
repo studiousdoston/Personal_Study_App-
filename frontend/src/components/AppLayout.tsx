@@ -1,9 +1,9 @@
 import { NavLink, Outlet, useLocation } from "react-router";
-import { Flame, Layers, LogOut, RotateCcw } from "lucide-react";
-import { useAuth } from "../context/useAuth";
+import { Flame, Layers, RotateCcw } from "lucide-react";
 import { useStats } from "../hooks/useStats";
 import { useVisualViewportHeight } from "../hooks/useVisualViewportHeight";
 import { plural } from "../utils/plural";
+import { LogoutButton } from "./LogoutButton";
 import styles from "./AppLayout.module.css";
 
 function navClass({ isActive }: { isActive: boolean }) {
@@ -11,7 +11,6 @@ function navClass({ isActive }: { isActive: boolean }) {
 }
 
 export default function AppLayout() {
-  const { logout } = useAuth();
   const { data: stats } = useStats();
   const { pathname } = useLocation();
   useVisualViewportHeight();
@@ -35,15 +34,7 @@ export default function AppLayout() {
             )}
             {/* streak badge, only shown once stats have loaded */}
 
-            <button
-              type="button"
-              className={styles.iconButton}
-              onClick={logout}
-              aria-label="Log out"
-            >
-              <LogOut size={20} aria-hidden="true" />
-            </button>
-            {/* icon-only button, so aria-label gives screen readers a name */}
+            <LogoutButton />
           </div>
         </div>
       </header>

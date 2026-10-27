@@ -1,17 +1,20 @@
 import { Link, useLocation, useNavigate } from "react-router";
 import { useState } from "react";
 
+import { PasswordInput } from "../components/common/PasswordInput";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessage } from "../services/errors";
+import { readAuthLinkState, type AuthLinkState } from "../utils/authLinkState";
 import styles from "./AuthPage.module.css";
 
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as { from?: string } | null)?.from ?? "/";
+  const linkState = readAuthLinkState(location.state);
+  const from = linkState.from ?? "/";
   // The page RequireAuth remembered, or "/" if the user came to /login directly
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(linkState.email ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -58,9 +61,8 @@ export function LoginPage() {
             <label htmlFor="password" className={styles.label}>
               Password
             </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               className={styles.input}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -82,7 +84,11 @@ export function LoginPage() {
 
         <p className={styles.footer}>
           No account?{" "}
-          <Link to="/register" className={styles.link}>
+          <Link
+            to="/register"
+            state={{ from: linkState.from, email } satisfies AuthLinkState}
+            className={styles.link}
+          >
             Register
           </Link>
         </p>

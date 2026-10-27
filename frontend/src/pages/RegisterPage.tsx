@@ -1,14 +1,17 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useState } from "react";
 
+import { PasswordInput } from "../components/common/PasswordInput";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessage } from "../services/errors";
+import { readAuthLinkState, type AuthLinkState } from "../utils/authLinkState";
 import styles from "./AuthPage.module.css";
 
 export function RegisterPage() {
   const { register } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const linkState = readAuthLinkState(useLocation().state);
+  const [email, setEmail] = useState(linkState.email ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -55,9 +58,8 @@ export function RegisterPage() {
             <label htmlFor="password" className={styles.label}>
               Password
             </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               className={styles.input}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -80,7 +82,11 @@ export function RegisterPage() {
 
         <p className={styles.footer}>
           Already have an account?{" "}
-          <Link to="/login" className={styles.link}>
+          <Link
+            to="/login"
+            state={{ from: linkState.from, email } satisfies AuthLinkState}
+            className={styles.link}
+          >
             Log in
           </Link>
         </p>
