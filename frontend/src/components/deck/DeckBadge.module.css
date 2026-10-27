@@ -1,0 +1,24 @@
+.badge {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: var(--deck-color);
+  background: color-mix(in srgb, var(--deck-color) 14%, transparent);
+  border-radius: var(--radius-md);
+}
+
+.sm {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+}
+
+.md {
+  width: 40px;
+  height: 40px;
+}
+
+.lg {
+  width: 48px;
+  height: 48px;
+}

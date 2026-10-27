@@ -2,7 +2,7 @@ import { Link } from "react-router";
 import { ChevronRight } from "lucide-react";
 import { REVIEW_PICKER_PATH } from "../../hooks/useReviewExit";
 import type { Deck } from "../../types/models";
-import { firstChar } from "../../utils/firstChar";
+import { DeckBadge } from "../deck/DeckBadge";
 import styles from "./ReviewPickerRow.module.css";
 
 export function ReviewPickerRow({ deck }: { deck: Deck }) {
@@ -13,9 +13,7 @@ export function ReviewPickerRow({ deck }: { deck: Deck }) {
         state={{ from: REVIEW_PICKER_PATH }}
         className={styles.row}
       >
-        <span className={styles.avatar} aria-hidden="true">
-          {firstChar(deck.name)}
-        </span>
+        <DeckBadge color={deck.color} icon={deck.icon} size="md" />
         <span className={styles.name}>{deck.name}</span>
         <span className={styles.pill}>{deck.due_count} due</span>
         <ChevronRight size={20} className={styles.chevron} aria-hidden="true" />

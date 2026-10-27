@@ -17,19 +17,6 @@
   border-color: var(--color-primary);
 }
 
-.avatar {
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  font-weight: 700;
-  color: var(--color-primary-text);
-  background: var(--color-primary-soft);
-  border-radius: var(--radius-md);
-}
-/* same square as the deck tiles on Home */
-
 .name {
   flex: 1;
   min-width: 0;

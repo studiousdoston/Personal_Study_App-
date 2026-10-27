@@ -6,6 +6,7 @@ import { Link } from "react-router";
 import { useDeleteDeck } from "../../hooks/useDeleteDeck";
 import { getErrorMessage } from "../../services/errors";
 import { ConfirmDialog } from "../common/ConfirmDialog";
+import { DeckBadge } from "./DeckBadge";
 import { DeckFormDialog } from "./DeckFormDialog";
 import { QUIZ_MIN_CARDS } from "../../constants";
 import { plural, pluralWord } from "../../utils/plural";
@@ -70,6 +71,7 @@ export function DeckHeader({ deck }: { deck: Deck }) {
   return (
     <section className={styles.header}>
       <div className={styles.top}>
+        <DeckBadge color={deck.color} icon={deck.icon} size="lg" />
         <h1 className={styles.title}>{deck.name}</h1>
         <div className={styles.tools}>
           <button

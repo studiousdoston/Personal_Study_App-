@@ -1,7 +1,8 @@
 import { Link } from "react-router";
 import type { Deck } from "../../types/models";
-import { firstChar } from "../../utils/firstChar";
+import { deckColorVar } from "../../utils/deckColorVar";
 import { plural } from "../../utils/plural";
+import { DeckBadge } from "./DeckBadge";
 import styles from "./DeckTile.module.css";
 
 type TileStatus = "due" | "done" | "empty";
@@ -23,11 +24,13 @@ export function DeckTile({ deck }: { deck: Deck }) {
     deck.card_count === 0 ? "No cards yet" : `${plural(deck.card_count, "card")} total`;
 
   return (
-    <Link to={`/decks/${deck.id}`} className={`${styles.tile} ${styles[status]}`}>
+    <Link
+      to={`/decks/${deck.id}`}
+      className={`${styles.tile} ${styles[status]}`}
+      style={{ "--deck-color": deckColorVar(deck.color) } as React.CSSProperties}
+    >
       <div className={styles.top}>
-        <span className={styles.avatar} aria-hidden="true">
-          {firstChar(deck.name)}
-        </span>
+        <DeckBadge color={deck.color} icon={deck.icon} size="md" className={styles.badge} />
         <span className={styles.pill}>{PILL_TEXT[status](deck)}</span>
       </div>
 

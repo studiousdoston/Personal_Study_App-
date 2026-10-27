@@ -41,22 +41,10 @@
   gap: var(--space-2);
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: var(--radius-md);
-  background: var(--color-primary-soft);
-  color: var(--color-primary-text);
-  font-weight: 700;
+.due .badge {
+  background: var(--color-surface-raised);
 }
-
-.due .avatar {
-  background: rgb(255 255 255 / 0.18);
-  color: inherit;
-}
-/* on the green tile: a translucent white square, like the Stitch design */
+/* on the green tile: a solid chip, so every deck color stays readable */
 
 .pill {
   padding: 2px var(--space-2);
@@ -149,13 +137,13 @@
 .fill {
   height: 100%;
   border-radius: var(--radius-pill);
-  background: var(--color-primary);
+  background: var(--deck-color);
 }
 
 .due .fill {
   background: var(--color-progress);
 }
-/* mint bar on green tiles, green bar on surface tiles */
+/* mint bar on green tiles, deck-colored bar on surface tiles */
 
 .count {
   font-family: var(--font-mono);

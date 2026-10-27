@@ -18,6 +18,7 @@
 .title {
   flex: 1;
   min-width: 0;
+  align-self: center;
   font-size: var(--font-size-xl);
   line-height: 1.2;
   overflow-wrap: anywhere;
