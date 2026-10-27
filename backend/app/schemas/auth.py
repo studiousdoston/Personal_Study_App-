@@ -21,6 +21,10 @@ class LoginRequest(BaseModel):
         return value.strip().lower()
 
 
+class RegistrationStatusOut(BaseModel):
+    open: bool
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"

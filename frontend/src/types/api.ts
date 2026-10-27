@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/auth/registration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Registration Status */
+        get: operations["get_registration_status_auth_registration_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/register": {
         parameters: {
             query?: never;
@@ -392,6 +409,11 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** RegistrationStatusOut */
+        RegistrationStatusOut: {
+            /** Open */
+            open: boolean;
+        };
         /** ReviewCreate */
         ReviewCreate: {
             /** Rating */
@@ -460,6 +482,26 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    get_registration_status_auth_registration_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegistrationStatusOut"];
+                };
+            };
+        };
+    };
     register_auth_register_post: {
         parameters: {
             query?: never;
@@ -951,7 +993,9 @@ export interface operations {
     create_review_cards__card_id__reviews_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                "x-timezone"?: string | null;
+            };
             path: {
                 card_id: string;
             };

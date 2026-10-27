@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     cookie_secure: bool = False
     cors_origins: list[str] = ["http://localhost:5173"]
     cookie_path: str = "/auth"
+    allow_registration: bool = True
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

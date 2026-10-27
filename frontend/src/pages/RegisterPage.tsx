@@ -3,7 +3,8 @@ import { useState } from "react";
 
 import { PasswordInput } from "../components/common/PasswordInput";
 import { useAuth } from "../context/useAuth";
-import { getErrorMessage } from "../services/errors";
+import { useRegistrationStatus } from "../hooks/useRegistrationStatus";
+import { getErrorMessage, isForbiddenError } from "../services/errors";
 import { readAuthLinkState, type AuthLinkState } from "../utils/authLinkState";
 import styles from "./AuthPage.module.css";
 
@@ -15,6 +16,9 @@ export function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { data: registration, isPending } = useRegistrationStatus();
+  const [closedByServer, setClosedByServer] = useState(false);
+  const closed = registration?.open === false || closedByServer;
 
   async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,10 +28,42 @@ export function RegisterPage() {
       await register(email, password);
       navigate("/", { replace: true });
     } catch (err) {
-      setError(getErrorMessage(err));
+      if (isForbiddenError(err)) setClosedByServer(true);
+      else setError(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
+  }
+
+  const loginLink = (
+    <p className={styles.footer}>
+      Already have an account?{" "}
+      <Link
+        to="/login"
+        state={{ from: linkState.from, email } satisfies AuthLinkState}
+        className={styles.link}
+      >
+        Log in
+      </Link>
+    </p>
+  );
+
+  if (isPending) {
+    return <main className={styles.page} aria-busy="true" />;
+  }
+
+  if (closed) {
+    return (
+      <main className={styles.page}>
+        <div className={styles.card}>
+          <header className={styles.header}>
+            <h1 className={styles.title}>Sign-ups are closed</h1>
+            <p className={styles.subtitle}>BrainMaxx is invite-only for now.</p>
+          </header>
+          {loginLink}
+        </div>
+      </main>
+    );
   }
 
   return (
@@ -80,16 +116,7 @@ export function RegisterPage() {
           </button>
         </form>
 
-        <p className={styles.footer}>
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            state={{ from: linkState.from, email } satisfies AuthLinkState}
-            className={styles.link}
-          >
-            Log in
-          </Link>
-        </p>
+        {loginLink}
       </div>
     </main>
   );

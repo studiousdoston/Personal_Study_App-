@@ -5,7 +5,12 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.database import get_db
 from app.dependencies import CurrentUser
-from app.schemas.auth import LoginRequest, RegisterRequest, TokenResponse
+from app.schemas.auth import (
+    LoginRequest,
+    RegisterRequest,
+    RegistrationStatusOut,
+    TokenResponse,
+)
 from app.schemas.user import UserOut
 from app.services import auth_service
 
@@ -43,10 +48,19 @@ def _clear_refresh_cookie(response: Response) -> None:
 ##########################################################
 #!                       ROUTES
 ##########################################################
+@router.get("/registration", response_model=RegistrationStatusOut)
+def get_registration_status():
+    return auth_service.get_registration_status()
+
+
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     try:
         return auth_service.register(db, payload.email, payload.password)
+    except auth_service.RegistrationClosedError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Registration is closed"
+        ) from None
     except auth_service.EmailAlreadyRegisteredError:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail="Email is already registered"

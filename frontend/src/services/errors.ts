@@ -13,6 +13,10 @@ export function isNotFoundError(err: unknown): boolean {
   return status === 404 || status === 422;
 }
 
+export function isForbiddenError(err: unknown): boolean {
+  return isAxiosError(err) && err.response?.status === 403;
+}
+
 export function isNotEnoughCardsError(err: unknown): boolean {
   return (
     isAxiosError(err) &&

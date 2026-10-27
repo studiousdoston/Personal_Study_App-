@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.models import RefreshToken, User
+from app.schemas.auth import RegistrationStatusOut
 from app.security import (
     create_access_token,
     generate_refresh_token,
@@ -33,6 +34,9 @@ class InvalidCredentialsError(Exception):
 class InvalidRefreshTokenError(Exception):
     pass
 
+class RegistrationClosedError(Exception):
+    pass
+
 class AuthTokens(NamedTuple):
     access_token: str
     refresh_token: str
@@ -40,7 +44,14 @@ class AuthTokens(NamedTuple):
 ##########################################################
 #                       PUBLIC
 ##########################################################
+def get_registration_status() -> RegistrationStatusOut:
+    return RegistrationStatusOut(open=settings.allow_registration)
+
+
 def register(db: Session, email: str, password: str) -> User:
+    if not settings.allow_registration:
+        raise RegistrationClosedError()
+
     if _get_user_by_email(db, email) is not None:
         raise EmailAlreadyRegisteredError()
 

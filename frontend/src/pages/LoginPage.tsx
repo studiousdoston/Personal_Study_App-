@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { PasswordInput } from "../components/common/PasswordInput";
 import { useAuth } from "../context/useAuth";
+import { useRegistrationStatus } from "../hooks/useRegistrationStatus";
 import { getErrorMessage } from "../services/errors";
 import { readAuthLinkState, type AuthLinkState } from "../utils/authLinkState";
 import styles from "./AuthPage.module.css";
@@ -14,6 +15,7 @@ export function LoginPage() {
   const linkState = readAuthLinkState(location.state);
   const from = linkState.from ?? "/";
   // The page RequireAuth remembered, or "/" if the user came to /login directly
+  const { data: registration } = useRegistrationStatus();
   const [email, setEmail] = useState(linkState.email ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -82,16 +84,18 @@ export function LoginPage() {
           </button>
         </form>
 
-        <p className={styles.footer}>
-          No account?{" "}
-          <Link
-            to="/register"
-            state={{ from: linkState.from, email } satisfies AuthLinkState}
-            className={styles.link}
-          >
-            Register
-          </Link>
-        </p>
+        {registration?.open && (
+          <p className={styles.footer}>
+            No account?{" "}
+            <Link
+              to="/register"
+              state={{ from: linkState.from, email } satisfies AuthLinkState}
+              className={styles.link}
+            >
+              Register
+            </Link>
+          </p>
+        )}
       </div>
     </main>
   );
