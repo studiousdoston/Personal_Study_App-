@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import (
     AfterValidator,
@@ -8,8 +8,41 @@ from pydantic import (
     ConfigDict,
     Field,
     StringConstraints,
+    ValidationInfo,
     field_validator,
 )
+
+
+DeckColor = Literal["green", "blue", "purple", "rose", "amber", "slate"]
+DeckIcon = Literal[
+    "book-open",
+    "graduation-cap",
+    "brain",
+    "pen-line",
+    "languages",
+    "globe",
+    "landmark",
+    "music",
+    "palette",
+    "code",
+    "database",
+    "flask-conical",
+    "atom",
+    "dna",
+    "heart-pulse",
+    "calculator",
+    "sigma",
+    "chart-line",
+    "briefcase",
+    "scale",
+    "camera",
+    "dumbbell",
+    "chef-hat",
+    "plane",
+]
+
+DEFAULT_DECK_COLOR: DeckColor = "green"
+DEFAULT_DECK_ICON: DeckIcon = "book-open"
 
 
 def _empty_to_none(value: str | None) -> str | None:
@@ -27,17 +60,21 @@ DeckDescription = Annotated[
 class DeckCreate(BaseModel):
     name: DeckName
     description: DeckDescription = None
+    color: DeckColor = DEFAULT_DECK_COLOR
+    icon: DeckIcon = DEFAULT_DECK_ICON
 
 
 class DeckUpdate(BaseModel):
     name: DeckName | None = None
     description: DeckDescription = None
+    color: DeckColor | None = None
+    icon: DeckIcon | None = None
 
-    @field_validator("name")
+    @field_validator("name", "color", "icon")
     @classmethod
-    def reject_null_name(cls, value: str | None) -> str:
+    def reject_null(cls, value: str | None, info: ValidationInfo) -> str:
         if value is None:
-            raise ValueError("name cannot be null")
+            raise ValueError(f"{info.field_name} cannot be null")
         return value
 
 
@@ -46,6 +83,8 @@ class DeckOut(BaseModel):
     id: uuid.UUID
     name: str
     description: str | None
+    color: DeckColor
+    icon: DeckIcon
     created_at: datetime
     card_count: int
     due_count: int

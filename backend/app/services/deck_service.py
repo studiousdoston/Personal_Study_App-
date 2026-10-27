@@ -23,7 +23,13 @@ class DeckNotFoundError(Exception):
 #                       PUBLIC
 ##########################################################
 def create_deck(db: Session, user_id: uuid.UUID, data: DeckCreate) -> DeckOut:
-    deck = Deck(user_id=user_id, name=data.name, description=data.description)
+    deck = Deck(
+        user_id=user_id,
+        name=data.name,
+        description=data.description,
+        color=data.color,
+        icon=data.icon,
+    )
     db.add(deck)
     db.commit()
     db.refresh(deck)
@@ -116,6 +122,8 @@ def _with_stats(db: Session, decks: list[Deck]) -> list[DeckOut]:
                 id=deck.id,
                 name=deck.name,
                 description=deck.description,
+                color=deck.color,
+                icon=deck.icon,
                 created_at=deck.created_at,
                 card_count=stats.card_count,
                 due_count=stats.due_count,

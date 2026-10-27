@@ -5,6 +5,7 @@ from sqlalchemy import DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+from app.schemas.deck import DEFAULT_DECK_COLOR, DEFAULT_DECK_ICON
 
 if TYPE_CHECKING: 
   from app.models.user import User
@@ -19,6 +20,8 @@ class Deck(Base):
   )
   name: Mapped[str] = mapped_column(String(100))
   description: Mapped[str | None] = mapped_column(Text)
+  color: Mapped[str] = mapped_column(String(20), server_default=DEFAULT_DECK_COLOR)
+  icon: Mapped[str] = mapped_column(String(32), server_default=DEFAULT_DECK_ICON)
   created_at: Mapped[datetime] = mapped_column(
     DateTime(timezone=True), server_default=func.now()
   )
