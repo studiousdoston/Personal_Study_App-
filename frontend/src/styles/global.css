@@ -23,6 +23,14 @@
   --color-warning: #c98a00;
   --color-danger: #c4513f;
 
+  /* deck colors */
+  --deck-green: #2f7d5b;
+  --deck-blue: #2f6fae;
+  --deck-purple: #6b4fb0;
+  --deck-rose: #b5476b;
+  --deck-amber: #a8690c;
+  --deck-slate: #55626c;
+
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -79,6 +87,14 @@
   --color-success: #6cc79a;
   --color-warning: #e0b03a;
   --color-danger: #e07a68;
+
+  /* deck colors */
+  --deck-green: #5fbf8f;
+  --deck-blue: #72a9e0;
+  --deck-purple: #a98ee6;
+  --deck-rose: #e58aa8;
+  --deck-amber: #e6a94a;
+  --deck-slate: #9ba8b2;
 
   --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
   --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.5);

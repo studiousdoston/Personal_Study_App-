@@ -324,6 +324,18 @@ export interface components {
             name: string;
             /** Description */
             description?: string | null;
+            /**
+             * Color
+             * @default green
+             * @enum {string}
+             */
+            color: "green" | "blue" | "purple" | "rose" | "amber" | "slate";
+            /**
+             * Icon
+             * @default book-open
+             * @enum {string}
+             */
+            icon: "book-open" | "graduation-cap" | "brain" | "pen-line" | "languages" | "globe" | "landmark" | "music" | "palette" | "code" | "database" | "flask-conical" | "atom" | "dna" | "heart-pulse" | "calculator" | "sigma" | "chart-line" | "briefcase" | "scale" | "camera" | "dumbbell" | "chef-hat" | "plane";
         };
         /** DeckOut */
         DeckOut: {
@@ -336,6 +348,16 @@ export interface components {
             name: string;
             /** Description */
             description: string | null;
+            /**
+             * Color
+             * @enum {string}
+             */
+            color: "green" | "blue" | "purple" | "rose" | "amber" | "slate";
+            /**
+             * Icon
+             * @enum {string}
+             */
+            icon: "book-open" | "graduation-cap" | "brain" | "pen-line" | "languages" | "globe" | "landmark" | "music" | "palette" | "code" | "database" | "flask-conical" | "atom" | "dna" | "heart-pulse" | "calculator" | "sigma" | "chart-line" | "briefcase" | "scale" | "camera" | "dumbbell" | "chef-hat" | "plane";
             /**
              * Created At
              * Format: date-time
@@ -354,6 +376,10 @@ export interface components {
             name?: string | null;
             /** Description */
             description?: string | null;
+            /** Color */
+            color?: ("green" | "blue" | "purple" | "rose" | "amber" | "slate") | null;
+            /** Icon */
+            icon?: ("book-open" | "graduation-cap" | "brain" | "pen-line" | "languages" | "globe" | "landmark" | "music" | "palette" | "code" | "database" | "flask-conical" | "atom" | "dna" | "heart-pulse" | "calculator" | "sigma" | "chart-line" | "briefcase" | "scale" | "camera" | "dumbbell" | "chef-hat" | "plane") | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
