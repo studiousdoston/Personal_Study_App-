@@ -2,6 +2,7 @@ import { NavLink, Outlet, useLocation } from "react-router";
 import { Flame, Layers, LogOut, RotateCcw } from "lucide-react";
 import { useAuth } from "../context/useAuth";
 import { useStats } from "../hooks/useStats";
+import { useVisualViewportHeight } from "../hooks/useVisualViewportHeight";
 import { plural } from "../utils/plural";
 import styles from "./AppLayout.module.css";
 
@@ -13,6 +14,7 @@ export default function AppLayout() {
   const { logout } = useAuth();
   const { data: stats } = useStats();
   const { pathname } = useLocation();
+  useVisualViewportHeight();
   const inDecks = pathname === "/" || pathname.startsWith("/decks");
   return (
     <div className={styles.shell}>

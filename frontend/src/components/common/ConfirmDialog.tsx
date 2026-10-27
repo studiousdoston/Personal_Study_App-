@@ -1,5 +1,6 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { useState } from "react";
+import dialog from "./Dialog.module.css";
 import styles from "./ConfirmDialog.module.css";
 
 type ConfirmDialogProps = {
@@ -45,8 +46,8 @@ export function ConfirmDialog({
   return (
     <AlertDialog.Root open={open} onOpenChange={handleOpenChange}>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className={styles.overlay} />
-        <AlertDialog.Content className={styles.content}>
+        <AlertDialog.Overlay className={dialog.overlay} />
+        <AlertDialog.Content className={`${dialog.content} ${styles.content}`}>
           <header className={styles.header}>
             <AlertDialog.Title className={styles.title}>{title}</AlertDialog.Title>
             <AlertDialog.Description className={styles.description}>

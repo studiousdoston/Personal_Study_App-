@@ -1,0 +1,52 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgb(0 0 0 / 0.45);
+  animation: fadeIn 150ms ease-out;
+}
+
+.content {
+  --dialog-y: 0%;
+  position: fixed;
+  top: calc(max(var(--space-4), env(safe-area-inset-top)) + var(--vv-top, 0px));
+  left: 50%;
+  z-index: 21;
+  transform: translate(-50%, var(--dialog-y));
+  width: calc(100% - var(--space-6));
+  max-height: calc(var(--vvh, 100dvh) - 2 * var(--space-4));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+  animation: popIn 150ms ease-out;
+}
+/* phone: pinned near the top so the keyboard can't cover it;
+   --vvh / --vv-top come from useVisualViewportHeight */
+
+@media (min-width: 768px) {
+  .content {
+    --dialog-y: -50%;
+    top: 50%;
+    max-height: min(90dvh, calc(var(--vvh, 100dvh) - 2 * var(--space-4)));
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(var(--dialog-y) + 2%)) scale(0.96);
+  }
+}

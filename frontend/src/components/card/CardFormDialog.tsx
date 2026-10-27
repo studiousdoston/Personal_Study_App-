@@ -4,6 +4,8 @@ import { useCreateCard } from "../../hooks/useCreateCard";
 import { useUpdateCard } from "../../hooks/useUpdateCard";
 import { getErrorMessage } from "../../services/errors";
 import type { Card, CardUpdate } from "../../types/models";
+import { scrollFieldIntoView } from "../../utils/scrollFieldIntoView";
+import dialog from "../common/Dialog.module.css";
 import styles from "./CardFormDialog.module.css";
 
 type CardFormDialogProps = {
@@ -42,6 +44,9 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
 
   async function save(addAnother: boolean) {
     if (!canSubmit) return;
+    if (addAnother && document.activeElement !== frontRef.current) {
+      frontRef.current?.focus();
+    }
     const data = { front: front.trim(), back: back.trim() };
     try {
       if (isEdit) {
@@ -78,13 +83,20 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
     }
   }
 
+  function keepFocus(e: React.PointerEvent | React.MouseEvent) {
+    e.preventDefault();
+  }
+
   const canSubmit = front.trim() !== "" && back.trim() !== "" && !mutation.isPending;
 
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content}>
+        <Dialog.Overlay className={dialog.overlay} />
+        <Dialog.Content
+          className={`${dialog.content} ${styles.content}`}
+          onFocus={scrollFieldIntoView}
+        >
           <header className={styles.header}>
             <Dialog.Title className={styles.title}>
               {isEdit ? "Edit card" : "Add card"}
@@ -106,7 +118,9 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
                 id={frontId}
                 className={styles.textarea}
                 value={front}
-                onChange={(e) => setFront(e.target.value)}
+                onChange={(e) => {
+                  if (!mutation.isPending) setFront(e.target.value);
+                }}
                 onKeyDown={handleKeyDown}
                 required
               />
@@ -120,7 +134,9 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
                 id={backId}
                 className={styles.textarea}
                 value={back}
-                onChange={(e) => setBack(e.target.value)}
+                onChange={(e) => {
+                  if (!mutation.isPending) setBack(e.target.value);
+                }}
                 onKeyDown={handleKeyDown}
                 required
               />
@@ -143,6 +159,8 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
                   type="button"
                   className={styles.secondary}
                   disabled={!canSubmit}
+                  onPointerDown={keepFocus}
+                  onMouseDown={keepFocus}
                   onClick={() => save(true)}
                 >
                   Save and add another

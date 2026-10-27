@@ -4,6 +4,8 @@ import { useCreateDeck } from "../../hooks/useCreateDeck";
 import { useUpdateDeck } from "../../hooks/useUpdateDeck";
 import { getErrorMessage } from "../../services/errors";
 import type { Deck, DeckUpdate } from "../../types/models";
+import { scrollFieldIntoView } from "../../utils/scrollFieldIntoView";
+import dialog from "../common/Dialog.module.css";
 import styles from "./DeckFormDialog.module.css";
 
 type DeckFormDialogProps = {
@@ -64,8 +66,11 @@ export function DeckFormDialog({ open, onOpenChange, deck }: DeckFormDialogProps
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content}>
+        <Dialog.Overlay className={dialog.overlay} />
+        <Dialog.Content
+          className={`${dialog.content} ${styles.content}`}
+          onFocus={scrollFieldIntoView}
+        >
           <header className={styles.header}>
             <Dialog.Title className={styles.title}>
               {isEdit ? "Edit deck" : "New deck"}
