@@ -1,10 +1,11 @@
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import sm2
+from app import scheduling, sm2
 from app.models import Card, Review
 from app.schemas.review import ReviewCreate
 from app.services import card_service, deck_service
@@ -32,7 +33,7 @@ def list_due_cards(
 
 
 def create_review(
-    db: Session, user_id: uuid.UUID, card_id: uuid.UUID, data: ReviewCreate
+    db: Session, user_id: uuid.UUID, card_id: uuid.UUID, data: ReviewCreate, zone: ZoneInfo
 ) -> Card:
     card = card_service.get_card(db, user_id, card_id)
     result = sm2.review(card.ease_factor, card.interval_days, card.repetitions, data.rating)
@@ -42,7 +43,7 @@ def create_review(
     card.interval_days = result.interval_days
     card.repetitions = result.repetitions
     card.last_reviewed_at = now
-    card.next_review_at = now + timedelta(days=result.interval_days)
+    card.next_review_at = scheduling.next_review_at(now, result.interval_days, zone)
 
     db.add(
         Review(

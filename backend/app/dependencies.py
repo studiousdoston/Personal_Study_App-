@@ -1,6 +1,7 @@
 from typing import Annotated
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, Header, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
@@ -35,4 +36,20 @@ def get_current_user(
 
     return user
 
+
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+_UTC = ZoneInfo("UTC")
+
+
+def get_client_timezone(x_timezone: Annotated[str | None, Header()] = None) -> ZoneInfo:
+    if not x_timezone:
+        return _UTC
+    try:
+        return ZoneInfo(x_timezone)
+    except (ZoneInfoNotFoundError, ValueError):
+        return _UTC
+
+
+ClientTimezone = Annotated[ZoneInfo, Depends(get_client_timezone)]

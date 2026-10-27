@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.dependencies import CurrentUser
+from app.dependencies import ClientTimezone, CurrentUser
 from app.schemas.card import CardOut
 from app.schemas.review import ReviewCreate
 from app.services import card_service, deck_service, review_service
@@ -47,9 +47,10 @@ def create_review(
     card_id: uuid.UUID,
     payload: ReviewCreate,
     current_user: CurrentUser,
+    tz: ClientTimezone,
     db: Session = Depends(get_db),
 ):
     try:
-        return review_service.create_review(db, current_user.id, card_id, payload)
+        return review_service.create_review(db, current_user.id, card_id, payload, tz)
     except card_service.CardNotFoundError:
         raise _card_not_found() from None
