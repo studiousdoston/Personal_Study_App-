@@ -4,6 +4,7 @@ import { useStats } from "../hooks/useStats";
 import { useVisualViewportHeight } from "../hooks/useVisualViewportHeight";
 import { plural } from "../utils/plural";
 import { LogoutButton } from "./LogoutButton";
+import { ThemeToggle } from "./ThemeToggle";
 import styles from "./AppLayout.module.css";
 
 function navClass({ isActive }: { isActive: boolean }) {
@@ -34,6 +35,7 @@ export default function AppLayout() {
             )}
             {/* streak badge, only shown once stats have loaded */}
 
+            <ThemeToggle />
             <LogoutButton />
           </div>
         </div>

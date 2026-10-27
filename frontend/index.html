@@ -9,8 +9,24 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <meta name="theme-color" content="#f8f6f1" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#111613" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f8f6f1" />
+    <script>
+      (function () {
+        var pref = null;
+        try {
+          pref = localStorage.getItem("brainmaxx-theme");
+        } catch (e) {}
+        try {
+          var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme = pref === "light" || pref === "dark" ? pref : dark ? "dark" : "light";
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute("content", theme === "dark" ? "#111613" : "#f8f6f1");
+        } catch (e) {}
+      })();
+    </script>
 
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -52,14 +68,12 @@
         line-height: 1.5;
         color: #2f7d5b;
       }
-      @media (prefers-color-scheme: dark) {
-        html,
-        body {
-          background: #111613;
-        }
-        .boot-splash-name {
-          color: #6cc79a;
-        }
+      html[data-theme="dark"],
+      html[data-theme="dark"] body {
+        background: #111613;
+      }
+      html[data-theme="dark"] .boot-splash-name {
+        color: #6cc79a;
       }
     </style>
   </head>
