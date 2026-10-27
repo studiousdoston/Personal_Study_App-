@@ -1,9 +1,10 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useId, useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useCreateCard } from "../../hooks/useCreateCard";
 import { useUpdateCard } from "../../hooks/useUpdateCard";
 import { getErrorMessage } from "../../services/errors";
-import type { Card, CardUpdate } from "../../types/models";
+import type { Card, CardDraft, CardUpdate, DraftUpdate } from "../../types/models";
 import { scrollFieldIntoView } from "../../utils/scrollFieldIntoView";
 import dialog from "../common/Dialog.module.css";
 import styles from "./CardFormDialog.module.css";
@@ -13,22 +14,39 @@ type CardFormDialogProps = {
   onOpenChange: (open: boolean) => void;
   deckId: string;
   card?: Card;
+  draftEdit?: DraftEdit;
 };
 
-export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDialogProps) {
+type DraftEdit = {
+  draft: CardDraft;
+  onSubmit: (changes: DraftUpdate) => Promise<unknown>;
+};
+
+export function CardFormDialog({
+  open,
+  onOpenChange,
+  deckId,
+  card,
+  draftEdit,
+}: CardFormDialogProps) {
   const isEdit = card !== undefined;
-  const [front, setFront] = useState(card?.front ?? "");
-  const [back, setBack] = useState(card?.back ?? "");
+  const isDraft = draftEdit !== undefined;
+  const initial = draftEdit?.draft ?? card;
+  const [front, setFront] = useState(initial?.front ?? "");
+  const [back, setBack] = useState(initial?.back ?? "");
   const createMutation = useCreateCard(deckId);
   const updateMutation = useUpdateCard();
-  const mutation = isEdit ? updateMutation : createMutation;
+  const draftMutation = useMutation({
+    mutationFn: async (changes: DraftUpdate) => draftEdit?.onSubmit(changes),
+  });
+  const mutation = isDraft ? draftMutation : isEdit ? updateMutation : createMutation;
   const frontRef = useRef<HTMLTextAreaElement>(null);
   const frontId = useId();
   const backId = useId();
 
   function close() {
-    setFront(card?.front ?? "");
-    setBack(card?.back ?? "");
+    setFront(initial?.front ?? "");
+    setBack(initial?.back ?? "");
     mutation.reset();
     onOpenChange(false);
   }
@@ -49,7 +67,14 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
     }
     const data = { front: front.trim(), back: back.trim() };
     try {
-      if (isEdit) {
+      if (isDraft) {
+        const changes: DraftUpdate = {};
+        if (data.front !== draftEdit.draft.front) changes.front = data.front;
+        if (data.back !== draftEdit.draft.back) changes.back = data.back;
+        if (Object.keys(changes).length > 0) {
+          await draftMutation.mutateAsync(changes);
+        }
+      } else if (isEdit) {
         const changes: CardUpdate = {};
         if (data.front !== card.front) changes.front = data.front;
         if (data.back !== card.back) changes.back = data.back;
@@ -99,12 +124,14 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
         >
           <header className={styles.header}>
             <Dialog.Title className={styles.title}>
-              {isEdit ? "Edit card" : "Add card"}
+              {isDraft ? "Edit draft" : isEdit ? "Edit card" : "Add card"}
             </Dialog.Title>
             <Dialog.Description className={styles.subtitle}>
-              {isEdit
-                ? "Change the question or the answer."
-                : "Put the question on the front and the answer on the back."}
+              {isDraft
+                ? "Edited drafts are kept when you regenerate."
+                : isEdit
+                  ? "Change the question or the answer."
+                  : "Put the question on the front and the answer on the back."}
             </Dialog.Description>
           </header>
 
@@ -154,7 +181,7 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
                   Cancel
                 </button>
               </Dialog.Close>
-              {!isEdit && (
+              {!isEdit && !isDraft && (
                 <button
                   type="button"
                   className={styles.secondary}
@@ -167,7 +194,7 @@ export function CardFormDialog({ open, onOpenChange, deckId, card }: CardFormDia
                 </button>
               )}
               <button type="submit" className={styles.primary} disabled={!canSubmit}>
-                {mutation.isPending ? "Saving..." : isEdit ? "Save changes" : "Save"}
+                {mutation.isPending ? "Saving..." : isEdit || isDraft ? "Save changes" : "Save"}
               </button>
             </div>
           </form>

@@ -3,23 +3,25 @@ import { useGeneration } from "../../hooks/useGeneration";
 import type { Generation } from "../../types/models";
 import { plural } from "../../utils/plural";
 import { ErrorBox } from "../common/ErrorBox";
+import { DraftReview } from "./DraftReview";
+import { GenerationEmpty } from "./GenerationEmpty";
 import { GenerationFailed } from "./GenerationFailed";
 import { GenerationHeader } from "./GenerationHeader";
 import { GenerationNotFound } from "./GenerationNotFound";
 import { GenerationProgress } from "./GenerationProgress";
-import { GenerationResult } from "./GenerationResult";
 import styles from "./GenerationView.module.css";
 
 function statusText(job: Generation): string {
+  const hasDrafts = job.drafts.length > 0;
   switch (job.status) {
     case "queued":
-      return "Starting…";
+      return hasDrafts ? "Refining…" : "Starting…";
     case "running":
-      return "Writing your cards…";
+      return hasDrafts ? "Refining…" : "Writing your cards…";
     case "failed":
-      return "Generation failed";
+      return hasDrafts ? "Refine failed" : "Generation failed";
     case "done":
-      return job.drafts.length === 0
+      return !hasDrafts
         ? "No cards could be made from these notes."
         : `${plural(job.drafts.length, "draft")} ready`;
   }
@@ -46,12 +48,14 @@ export function GenerationView({ generationId }: { generationId: string }) {
       <p className={styles.srOnly} aria-live="polite">
         {statusText(job)}
       </p>
-      {job.status === "queued" || job.status === "running" ? (
+      {job.drafts.length > 0 ? (
+        <DraftReview generation={job} />
+      ) : job.status === "queued" || job.status === "running" ? (
         <GenerationProgress status={job.status} />
       ) : job.status === "failed" ? (
         <GenerationFailed generation={job} />
       ) : (
-        <GenerationResult generation={job} />
+        <GenerationEmpty deckId={job.deck_id} />
       )}
     </div>
   );

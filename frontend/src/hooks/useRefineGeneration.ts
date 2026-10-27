@@ -6,6 +6,9 @@ export function useRefineGeneration(generationId: string) {
 
   return useMutation({
     mutationFn: (instructions: string | null) => refineGeneration(generationId, instructions),
-    onSuccess: (generation) => queryClient.setQueryData(["generations", generationId], generation),
+    onSuccess: (generation) => {
+      queryClient.setQueryData(["generations", generationId], generation);
+      return queryClient.invalidateQueries({ queryKey: ["generations", "list"] });
+    },
   });
 }

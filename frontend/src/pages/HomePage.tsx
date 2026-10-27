@@ -6,6 +6,7 @@ import { useDecks } from "../hooks/useDecks";
 import { StatTiles } from "../components/stats/StatTiles";
 import { DeckGrid } from "../components/deck/DeckGrid";
 import { DeckFormDialog } from "../components/deck/DeckFormDialog";
+import { DraftsWaitingBanner } from "../components/generate/DraftsWaitingBanner";
 import { pluralWord } from "../utils/plural";
 import styles from "./HomePage.module.css";
 
@@ -42,6 +43,7 @@ export function HomePage() {
       <StatTiles />
 
       <section className={styles.decks} aria-labelledby="decks-heading">
+        <DraftsWaitingBanner />
         <div className={styles.decksHeader}>
           <div className={styles.decksTitle}>
             <h2 id="decks-heading" className={styles.heading}>

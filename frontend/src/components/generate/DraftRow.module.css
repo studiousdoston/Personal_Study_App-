@@ -1,0 +1,114 @@
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.check {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  cursor: pointer;
+}
+/* the label is the 48px tap area; the checkbox inside stays a normal size */
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block: var(--space-2);
+}
+
+.front,
+.back {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.front {
+  font-weight: 500;
+}
+
+.back {
+  color: var(--color-text-muted);
+}
+
+.excluded .content {
+  opacity: 0.55;
+}
+
+.excluded {
+  background: transparent;
+  border-style: dashed;
+}
+/* unticked: faded text and a dashed outline, still readable */
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.duplicate,
+.edited {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+}
+
+.duplicate {
+  color: var(--color-accent-text);
+  background: var(--color-accent-soft);
+}
+
+.edited {
+  color: var(--color-primary-text);
+  background: var(--color-primary-soft);
+}
+
+.actions {
+  flex-shrink: 0;
+  display: flex;
+}
+
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+}
+
+.iconButton:hover {
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+.iconDanger:hover {
+  color: var(--color-danger);
+}

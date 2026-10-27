@@ -12,6 +12,8 @@ import { CardListSkeleton } from "../card/CardListSkeleton";
 import { CardFormDialog } from "../card/CardFormDialog";
 import { CardFilters } from "../card/CardFilters";
 import { ErrorBox } from "../common/ErrorBox";
+import { FlashMessage } from "../common/FlashMessage";
+import { DraftsWaitingBanner } from "../generate/DraftsWaitingBanner";
 import { getErrorMessage, isNotFoundError } from "../../services/errors";
 import { filterCards, isFilterActive } from "../../utils/filterCards";
 import type { Card } from "../../types/models";
@@ -44,6 +46,7 @@ export function DeckView({ deckId }: { deckId: string }) {
         <ArrowLeft size={18} aria-hidden="true" />
         All decks
       </Link>
+      <FlashMessage />
       {deck.isPending ? (
         <div className={`${styles.skeleton} ${styles.skeletonHeader}`} aria-hidden="true" />
       ) : deck.isError ? (
@@ -51,6 +54,7 @@ export function DeckView({ deckId }: { deckId: string }) {
       ) : (
         <DeckHeader deck={deck.data} />
       )}
+      <DraftsWaitingBanner deckId={deckId} />
       <section className={styles.cards} aria-label="cards-heading" aria-busy={cards.isPending}>
         <div className={styles.sectionHeader}>
           <h2 id="cards-heading" className={styles.sectionTitle}>

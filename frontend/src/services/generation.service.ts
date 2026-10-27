@@ -1,4 +1,11 @@
-import type { Generation, GenerationCreate } from "../types/models";
+import type {
+  CardDraft,
+  DraftUpdate,
+  Generation,
+  GenerationCreate,
+  GenerationSummary,
+  SaveResult,
+} from "../types/models";
 import { api } from "./client";
 
 export async function createGeneration(
@@ -20,4 +27,27 @@ export async function refineGeneration(
 ): Promise<Generation> {
   const res = await api.post<Generation>(`/generations/${generationId}/refine`, { instructions });
   return res.data;
+}
+
+export async function listGenerations(): Promise<GenerationSummary[]> {
+  const res = await api.get<GenerationSummary[]>("/generations");
+  return res.data;
+}
+
+export async function saveGeneration(generationId: string): Promise<SaveResult> {
+  const res = await api.post<SaveResult>(`/generations/${generationId}/save`);
+  return res.data;
+}
+
+export async function deleteGeneration(generationId: string): Promise<void> {
+  await api.delete(`/generations/${generationId}`);
+}
+
+export async function updateDraft(draftId: string, data: DraftUpdate): Promise<CardDraft> {
+  const res = await api.patch<CardDraft>(`/drafts/${draftId}`, data);
+  return res.data;
+}
+
+export async function deleteDraft(draftId: string): Promise<void> {
+  await api.delete(`/drafts/${draftId}`);
 }

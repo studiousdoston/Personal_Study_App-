@@ -18,3 +18,7 @@ export type QuizQuestion = components["schemas"]["QuizQuestion"];
 export type GenerationCreate = components["schemas"]["GenerationOptions"];
 export type GenerationMode = GenerationCreate["mode"];
 export type Generation = components["schemas"]["GenerationOut"];
+export type GenerationSummary = components["schemas"]["GenerationSummary"];
+export type CardDraft = components["schemas"]["CardDraftOut"];
+export type DraftUpdate = components["schemas"]["DraftUpdate"];
+export type SaveResult = components["schemas"]["SaveResult"];
