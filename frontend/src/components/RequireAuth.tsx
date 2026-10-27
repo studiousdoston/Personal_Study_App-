@@ -1,12 +1,13 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuth } from "../context/useAuth";
+import { AppSplash } from "./common/AppSplash";
 
 export function RequireAuth() {
   const { status } = useAuth();
   const location = useLocation();
 
   if (status === "loading") {
-    return <p>Loading...</p>;
+    return <AppSplash />;
   }
 
   if (status === "unauthenticated") {
