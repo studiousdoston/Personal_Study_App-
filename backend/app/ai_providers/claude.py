@@ -170,7 +170,4 @@ def _parse_cards(response, limit: int) -> list[DraftCard]:
             cards.append(DraftCard(front=raw.front, back=raw.back))
         except ValidationError:
             continue
-    if not cards:
-        logger.warning("Claude output had no usable cards")
-        raise AiBadOutputError()
     return cards[:limit]

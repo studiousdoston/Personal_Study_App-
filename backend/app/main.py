@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db
-from app.routers import ai, auth, cards, decks, quiz, reviews, stats
+from app.routers import auth, cards, decks, generations, quiz, reviews, stats
 
 app = FastAPI(title='BrainMaxx API')
 app.add_middleware(
@@ -23,7 +23,7 @@ app.include_router(cards.router)
 app.include_router(reviews.router)
 app.include_router(quiz.router)
 app.include_router(stats.router)
-app.include_router(ai.router)
+app.include_router(generations.router)
 
 # register a GET route 
 @app.get('/health')
