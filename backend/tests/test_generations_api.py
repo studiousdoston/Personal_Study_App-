@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
-from sqlalchemy import Connection
+from sqlalchemy import Connection, select
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.ai_providers import fake
@@ -16,7 +16,7 @@ from app.dependencies import get_current_user
 from app.main import app
 from app.models import Card, CardDraft, Deck, Generation, User
 from app.schemas.ai import DraftCard, GenerateCardsRequest
-from app.services import ai_service, generation_service
+from app.services import ai_service, card_service, generation_service
 
 
 ##########################################################
@@ -301,7 +301,7 @@ def test_stuck_job_is_marked_timed_out(
         user,
         deck,
         status="running",
-        created_at=datetime.now(timezone.utc) - timedelta(minutes=6),
+        queued_at=datetime.now(timezone.utc) - timedelta(minutes=6),
     )
 
     job = _get(client, str(generation.id))
@@ -370,3 +370,402 @@ def test_keep_cards_must_be_fewer_than_count():
     keep = [{"front": "a", "back": "b"}, {"front": "c", "back": "d"}]
     with pytest.raises(ValidationError):
         GenerateCardsRequest.model_validate(_body(count=2, keep_cards=keep))
+
+
+##########################################################
+#!                   ACTION HELPERS
+##########################################################
+def _spy(monkeypatch: pytest.MonkeyPatch) -> list[GenerateCardsRequest]:
+    requests = []
+
+    def generate_cards(request, existing_fronts):
+        requests.append(request)
+        return fake.generate_cards(request, existing_fronts)
+
+    monkeypatch.setattr(ai_service, "generate_cards", generate_cards)
+    return requests
+
+
+def _refine(client: TestClient, generation_id: str, **body):
+    return client.post(f"/generations/{generation_id}/refine", json=body)
+
+
+def _patch(client: TestClient, draft_id: str, **body):
+    return client.patch(f"/drafts/{draft_id}", json=body)
+
+
+def _done_job(client: TestClient, deck: Deck, **fields) -> dict:
+    return _get(client, _start(client, deck, **fields)["id"])
+
+
+def _job_with_draft(db: Session, user: User, deck: Deck, **fields) -> Generation:
+    generation = _job(db, user, deck, **fields)
+    generation.drafts.append(CardDraft(front="f", back="b", position=0))
+    db.flush()
+    return generation
+
+
+def _soft_delete(db: Session, deck: Deck) -> None:
+    deck.deleted_at = datetime.now(timezone.utc)
+    db.flush()
+
+
+##########################################################
+#!                        REFINE
+##########################################################
+def test_refine_keeps_edited_drafts_first_and_replaces_the_rest(
+    client: TestClient, db: Session, deck: Deck, monkeypatch: pytest.MonkeyPatch
+):
+    job = _done_job(client, deck, count=3)
+    first, second, third = job["drafts"]
+    assert job["refines_left"] == 2
+    _patch(client, second["id"], front="My own question")
+    _patch(client, third["id"], included=False)
+    requests = _spy(monkeypatch)
+
+    response = _refine(client, job["id"], instructions="harder")
+
+    assert response.status_code == 202
+    assert response.json()["status"] == "queued"
+    [request] = requests
+    assert request.keep_cards == [DraftCard(front="My own question", back=second["back"])]
+    assert request.avoid_cards == [DraftCard(front=third["front"], back=third["back"])]
+    assert request.instructions == "harder"
+    assert request.new_card_count == 2
+
+    refined = _get(client, job["id"])
+    assert refined["status"] == "done"
+    assert refined["refines_left"] == 1
+    assert [d["position"] for d in refined["drafts"]] == [0, 1, 2]
+    assert refined["drafts"][0]["id"] == second["id"]
+    assert refined["drafts"][0]["edited"] is True
+    assert {d["id"] for d in refined["drafts"]}.isdisjoint({first["id"], third["id"]})
+    assert all(d["back"].endswith("[harder]") for d in refined["drafts"][1:])
+
+    generation = db.get(Generation, uuid.UUID(job["id"]))
+    db.refresh(generation)
+    assert generation.request["instructions"] == "harder"
+    assert generation.run_count == 2
+
+
+def test_refine_flags_new_drafts_that_repeat_kept_ones(
+    client: TestClient, deck: Deck, monkeypatch: pytest.MonkeyPatch
+):
+    job = _done_job(client, deck, count=2)
+    _patch(client, job["drafts"][0]["id"], back="Edited back")
+    _returns(monkeypatch, [DraftCard(front=job["drafts"][0]["front"].upper(), back="x")])
+
+    _refine(client, job["id"])
+
+    drafts = _get(client, job["id"])["drafts"]
+    assert [(d["edited"], d["is_duplicate"], d["included"]) for d in drafts] == [
+        (True, False, True),
+        (False, True, False),
+    ]
+
+
+def test_third_refine_returns_409(client: TestClient, deck: Deck):
+    job = _done_job(client, deck)
+    assert _refine(client, job["id"]).status_code == 202
+    assert _refine(client, job["id"]).status_code == 202
+    assert _get(client, job["id"])["refines_left"] == 0
+
+    response = _refine(client, job["id"])
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "No refines left"
+
+
+@pytest.mark.parametrize("status", ["queued", "running"])
+def test_refine_while_running_returns_409(
+    client: TestClient, db: Session, user: User, deck: Deck, status: str
+):
+    generation = _job(db, user, deck, status=status)
+
+    response = _refine(client, str(generation.id))
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Generation is still running"
+
+
+def test_refine_with_every_draft_edited_returns_409(client: TestClient, deck: Deck):
+    job = _done_job(client, deck, count=2)
+    for draft in job["drafts"]:
+        _patch(client, draft["id"], back="Mine")
+
+    response = _refine(client, job["id"])
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Nothing to regenerate"
+
+
+def test_failed_refine_keeps_old_drafts_and_run_count(
+    client: TestClient, deck: Deck, monkeypatch: pytest.MonkeyPatch
+):
+    job = _done_job(client, deck, count=3)
+    _raises(monkeypatch, AiUnavailableError())
+
+    _refine(client, job["id"])
+
+    failed = _get(client, job["id"])
+    assert failed["status"] == "failed"
+    assert failed["drafts"] == job["drafts"]
+    assert failed["refines_left"] == 2
+
+
+def test_refine_with_too_long_instructions_returns_422(client: TestClient, deck: Deck):
+    text = "x" * (settings.ai_max_input_chars - 5)
+    job = _done_job(client, deck, sources=[{"type": "text", "text": text}])
+
+    response = _refine(client, job["id"], instructions="x" * 10)
+
+    assert response.status_code == 422
+    assert _get(client, job["id"])["status"] == "done"
+
+
+def test_refine_on_soft_deleted_deck_returns_404(client: TestClient, db: Session, deck: Deck):
+    job = _done_job(client, deck)
+    _soft_delete(db, deck)
+
+    assert _refine(client, job["id"]).status_code == 404
+
+
+##########################################################
+#!                        DRAFTS
+##########################################################
+def test_editing_front_sets_edited_and_recomputes_duplicate(
+    client: TestClient, db: Session, deck: Deck
+):
+    db.add(Card(deck_id=deck.id, front="Existing card", back="b"))
+    db.flush()
+    first, second, third = _done_job(client, deck, count=3)["drafts"]
+
+    against_card = _patch(client, first["id"], front="  existing   CARD ").json()
+    against_draft = _patch(client, second["id"], front=third["front"].lower()).json()
+    unique = _patch(client, first["id"], front="Brand new").json()
+
+    assert (against_card["edited"], against_card["is_duplicate"]) == (True, True)
+    assert against_card["front"] == "existing   CARD"
+    assert against_card["included"] is True
+    assert against_draft["is_duplicate"] is True
+    assert unique["is_duplicate"] is False
+
+
+def test_editing_back_sets_edited_only(client: TestClient, deck: Deck):
+    draft = _done_job(client, deck)["drafts"][0]
+
+    unchanged = _patch(client, draft["id"], back=draft["back"]).json()
+    changed = _patch(client, draft["id"], back="New back").json()
+
+    assert unchanged["edited"] is False
+    assert (changed["back"], changed["edited"]) == ("New back", True)
+    assert changed["is_duplicate"] == draft["is_duplicate"]
+
+
+def test_toggling_included(client: TestClient, deck: Deck):
+    draft = _done_job(client, deck)["drafts"][0]
+
+    off = _patch(client, draft["id"], included=False).json()
+    on = _patch(client, draft["id"], included=True).json()
+
+    assert (off["included"], off["edited"]) == (False, False)
+    assert on["included"] is True
+
+
+@pytest.mark.parametrize("field", ["front", "back", "included"])
+def test_null_draft_field_returns_422(client: TestClient, deck: Deck, field: str):
+    draft = _done_job(client, deck)["drafts"][0]
+    assert _patch(client, draft["id"], **{field: None}).status_code == 422
+
+
+def test_empty_front_returns_422(client: TestClient, deck: Deck):
+    draft = _done_job(client, deck)["drafts"][0]
+    assert _patch(client, draft["id"], front="   ").status_code == 422
+
+
+def test_other_users_draft_returns_404(client: TestClient, db: Session):
+    other = _user(db)
+    draft = _job_with_draft(db, other, _deck(db, other), status="done").drafts[0]
+
+    assert _patch(client, str(draft.id), back="x").status_code == 404
+    assert client.delete(f"/drafts/{draft.id}").status_code == 404
+
+
+def test_draft_of_soft_deleted_deck_returns_404(client: TestClient, db: Session, deck: Deck):
+    draft = _done_job(client, deck)["drafts"][0]
+    _soft_delete(db, deck)
+
+    assert _patch(client, draft["id"], back="x").status_code == 404
+    assert client.delete(f"/drafts/{draft['id']}").status_code == 404
+
+
+def test_draft_actions_while_running_return_409(
+    client: TestClient, db: Session, user: User, deck: Deck
+):
+    draft = _job_with_draft(db, user, deck, status="running").drafts[0]
+
+    assert _patch(client, str(draft.id), back="x").status_code == 409
+    assert client.delete(f"/drafts/{draft.id}").status_code == 409
+
+
+def test_delete_draft(client: TestClient, deck: Deck):
+    job = _done_job(client, deck, count=2)
+    first, second = job["drafts"]
+
+    response = client.delete(f"/drafts/{first['id']}")
+
+    assert response.status_code == 204
+    assert [d["id"] for d in _get(client, job["id"])["drafts"]] == [second["id"]]
+
+
+##########################################################
+#!                         SAVE
+##########################################################
+def _deck_cards(client: TestClient, deck: Deck) -> list[dict]:
+    return client.get(f"/decks/{deck.id}/cards").json()
+
+
+def test_save_creates_included_cards_in_order_and_removes_the_job(
+    client: TestClient, db: Session, deck: Deck
+):
+    job = _done_job(client, deck, count=3)
+    first, second, third = job["drafts"]
+    _patch(client, second["id"], included=False)
+    _patch(client, third["id"], front="Edited third")
+
+    response = client.post(f"/generations/{job['id']}/save")
+
+    assert response.status_code == 200
+    assert response.json() == {"deck_id": str(deck.id), "saved_count": 2}
+    cards = _deck_cards(client, deck)
+    assert [card["front"] for card in cards] == [first["front"], "Edited third"]
+
+    manual = client.post(f"/decks/{deck.id}/cards", json={"front": "m", "back": "m"}).json()
+    sm2_fields = ("ease_factor", "interval_days", "repetitions", "last_reviewed_at")
+    for card in cards:
+        assert {f: card[f] for f in sm2_fields} == {f: manual[f] for f in sm2_fields}
+
+    assert client.get(f"/generations/{job['id']}").status_code == 404
+    assert db.scalars(select(CardDraft).where(CardDraft.generation_id == job["id"])).all() == []
+
+
+def test_save_with_nothing_included_returns_422(client: TestClient, deck: Deck):
+    job = _done_job(client, deck, count=1)
+    _patch(client, job["drafts"][0]["id"], included=False)
+
+    response = client.post(f"/generations/{job['id']}/save")
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == "No drafts selected"
+
+
+def test_save_on_soft_deleted_deck_returns_404_and_saves_nothing(
+    client: TestClient, db: Session, deck: Deck
+):
+    job = _done_job(client, deck)
+    _soft_delete(db, deck)
+
+    response = client.post(f"/generations/{job['id']}/save")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Deck not found"
+    assert db.scalars(select(Card).where(Card.deck_id == deck.id)).all() == []
+    assert db.get(Generation, uuid.UUID(job["id"])) is not None
+
+
+def test_save_while_running_returns_409(
+    client: TestClient, db: Session, user: User, deck: Deck
+):
+    generation = _job_with_draft(db, user, deck, status="running")
+    assert client.post(f"/generations/{generation.id}/save").status_code == 409
+
+
+def test_save_other_users_job_returns_404(client: TestClient, db: Session):
+    other = _user(db)
+    generation = _job_with_draft(db, other, _deck(db, other), status="done")
+    assert client.post(f"/generations/{generation.id}/save").status_code == 404
+
+
+def test_save_that_fails_halfway_saves_nothing(
+    client: TestClient, db: Session, deck: Deck, monkeypatch: pytest.MonkeyPatch
+):
+    job = _done_job(client, deck, count=3)
+    real_new_card = card_service.new_card
+    calls = []
+
+    def new_card(*args):
+        calls.append(args)
+        if len(calls) == 2:
+            raise RuntimeError("boom")
+        return real_new_card(*args)
+
+    monkeypatch.setattr(card_service, "new_card", new_card)
+
+    with pytest.raises(RuntimeError):
+        client.post(f"/generations/{job['id']}/save")
+
+    assert len(calls) == 2
+    assert _deck_cards(client, deck) == []
+    assert len(_get(client, job["id"])["drafts"]) == 3
+
+
+##########################################################
+#!                       DISCARD
+##########################################################
+def test_discard_returns_204_then_get_is_404(client: TestClient, deck: Deck):
+    job = _done_job(client, deck)
+
+    assert client.delete(f"/generations/{job['id']}").status_code == 204
+    assert client.get(f"/generations/{job['id']}").status_code == 404
+
+
+def test_discard_other_users_job_returns_404(client: TestClient, db: Session):
+    other = _user(db)
+    generation = _job(db, other, _deck(db, other))
+    assert client.delete(f"/generations/{generation.id}").status_code == 404
+
+
+def test_run_after_discard_does_nothing(
+    client: TestClient, db: Session, user: User, deck: Deck, monkeypatch: pytest.MonkeyPatch
+):
+    generation = _job(db, user, deck, status="running")
+    db.commit()
+    client.delete(f"/generations/{generation.id}")
+    calls = _returns(monkeypatch, [DraftCard(front="f", back="b")])
+
+    generation_service._finish(generation.id, [DraftCard(front="f", back="b")], [])
+    generation_service.run_generation(generation.id)
+
+    assert calls == []
+    assert db.scalars(select(CardDraft).where(CardDraft.generation_id == generation.id)).all() == []
+
+
+##########################################################
+#!                 VISIBILITY + CLEANUP
+##########################################################
+def test_old_jobs_are_cleaned_up(client: TestClient, db: Session, user: User, deck: Deck):
+    now = datetime.now(timezone.utc)
+    expired = _job_with_draft(db, user, deck, status="done", created_at=now - timedelta(days=8))
+    kept = _job(db, user, deck, status="done", created_at=now - timedelta(days=6))
+    expired_id = expired.id
+
+    listed = [row["id"] for row in client.get("/generations").json()]
+
+    assert listed == [str(kept.id)]
+    assert client.get(f"/generations/{expired_id}").status_code == 404
+    assert client.get(f"/generations/{kept.id}").status_code == 200
+    assert db.scalars(select(CardDraft).where(CardDraft.generation_id == expired_id)).all() == []
+
+
+def test_soft_deleted_deck_hides_its_jobs(
+    client: TestClient, db: Session, user: User, deck: Deck
+):
+    hidden = _job(db, user, deck, status="done")
+    other_deck = _deck(db, user)
+    visible = _job(db, user, other_deck, status="done")
+    _soft_delete(db, deck)
+
+    listed = [row["id"] for row in client.get("/generations").json()]
+
+    assert listed == [str(visible.id)]
+    assert client.get(f"/generations/{hidden.id}").status_code == 404

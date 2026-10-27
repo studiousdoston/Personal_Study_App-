@@ -8,6 +8,8 @@ from pydantic import (
     ConfigDict,
     Field,
     StringConstraints,
+    computed_field,
+    field_validator,
     model_validator,
 )
 
@@ -17,6 +19,7 @@ from app.schemas.card import CardText
 MAX_SOURCES = 5
 MAX_INSTRUCTIONS_LENGTH = 300
 MAX_AVOID_CARDS = 100
+MAX_REFINES = 2
 
 
 def _empty_to_none(value: str | None) -> str | None:
@@ -108,9 +111,15 @@ class GenerationBase(BaseModel):
     status: GenerationStatus
     progress_done: int
     progress_total: int
+    run_count: int = Field(exclude=True)
     error_message: str | None
     created_at: datetime
     finished_at: datetime | None
+
+    @computed_field
+    @property
+    def refines_left(self) -> int:
+        return max(0, MAX_REFINES - max(self.run_count - 1, 0))
 
 
 class GenerationOut(GenerationBase):
@@ -119,3 +128,28 @@ class GenerationOut(GenerationBase):
 
 class GenerationSummary(GenerationBase):
     draft_count: int
+
+
+##########################################################
+#                    DRAFT ACTIONS
+##########################################################
+class RefineRequest(BaseModel):
+    instructions: Instructions = None
+
+
+class DraftUpdate(BaseModel):
+    front: CardText | None = None
+    back: CardText | None = None
+    included: bool | None = None
+
+    @field_validator("front", "back", "included")
+    @classmethod
+    def reject_null(cls, value: str | bool | None) -> str | bool:
+        if value is None:
+            raise ValueError("cannot be null")
+        return value
+
+
+class SaveResult(BaseModel):
+    deck_id: uuid.UUID
+    saved_count: int

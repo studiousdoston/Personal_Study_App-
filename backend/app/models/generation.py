@@ -28,8 +28,12 @@ class Generation(Base):
     request: Mapped[dict[str, Any]] = mapped_column(JSONB)
     progress_done: Mapped[int] = mapped_column(default=0, server_default="0")
     progress_total: Mapped[int] = mapped_column(default=1, server_default="1")
+    run_count: Mapped[int] = mapped_column(default=0, server_default="0")
     error_message: Mapped[str | None] = mapped_column(String(300))
     created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    queued_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

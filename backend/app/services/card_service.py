@@ -23,11 +23,15 @@ def create_card(
     db: Session, user_id: uuid.UUID, deck_id: uuid.UUID, data: CardCreate
 ) -> Card:
     deck = deck_service.get_deck(db, user_id, deck_id)
-    card = Card(deck_id=deck.id, front=data.front, back=data.back)
+    card = new_card(deck.id, data.front, data.back)
     db.add(card)
     db.commit()
     db.refresh(card)
     return card
+
+
+def new_card(deck_id: uuid.UUID, front: str, back: str) -> Card:
+    return Card(deck_id=deck_id, front=front, back=back)
 
 
 def list_cards(db: Session, user_id: uuid.UUID, deck_id: uuid.UUID) -> list[Card]:
