@@ -1,8 +1,9 @@
-import { NavLink, Outlet, useLocation } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import { Flame, Layers, RotateCcw } from "lucide-react";
 import { useStats } from "../hooks/useStats";
 import { useVisualViewportHeight } from "../hooks/useVisualViewportHeight";
 import { plural } from "../utils/plural";
+import { RouteOutlet } from "./common/RouteOutlet";
 import { LogoutButton } from "./LogoutButton";
 import { ThemeToggle } from "./ThemeToggle";
 import styles from "./AppLayout.module.css";
@@ -46,7 +47,7 @@ export default function AppLayout() {
       </header>
 
       <main className={styles.main}>
-        <Outlet />
+        <RouteOutlet />
       </main>
 
       <nav className={styles.nav} aria-label="Main">

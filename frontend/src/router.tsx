@@ -1,17 +1,19 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { HomePage } from "./pages/HomePage";
 import { LoginPage } from "./pages/LoginPage";
-import { DeckPage } from "./pages/DeckPage";
-import { GeneratePage } from "./pages/GeneratePage";
-import { GenerationPage } from "./pages/GenerationPage";
-import { PracticePage } from "./pages/PracticePage";
-import { QuizPage } from "./pages/QuizPage";
-import { ReviewPage } from "./pages/ReviewPage";
-import { ReviewPickerPage } from "./pages/ReviewPickerPage";
-import { RegisterPage } from "./pages/RegisterPage";
 import { RequireAuth } from "./components/RequireAuth";
 import { RedirectIfAuthed } from "./components/RedirectIfAuthed";
 import AppLayout from "./components/AppLayout";
+import {
+  DeckPage,
+  GeneratePage,
+  GenerationPage,
+  PracticePage,
+  QuizPage,
+  RegisterPage,
+  ReviewPage,
+  ReviewPickerPage,
+} from "./lazyPages";
 
 export const router = createBrowserRouter([
   {

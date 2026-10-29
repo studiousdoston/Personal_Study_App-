@@ -1,0 +1,24 @@
+.fallback {
+  min-height: 50dvh;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  opacity: 0;
+  animation: appear 150ms ease-out 300ms forwards;
+}
+/* stays invisible for 300 ms, so fast loads don't flash a spinner */
+
+@keyframes appear {
+  to {
+    opacity: 1;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

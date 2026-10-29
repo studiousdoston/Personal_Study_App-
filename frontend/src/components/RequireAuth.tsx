@@ -1,6 +1,7 @@
-import { Navigate, Outlet, useLocation } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import { useAuth } from "../context/useAuth";
 import { AppSplash } from "./common/AppSplash";
+import { RouteOutlet } from "./common/RouteOutlet";
 
 export function RequireAuth() {
   const { status } = useAuth();
@@ -16,5 +17,5 @@ export function RequireAuth() {
     // (state.from), so the login page can send them back there afterwards.
   }
 
-  return <Outlet />;
+  return <RouteOutlet />;
 }

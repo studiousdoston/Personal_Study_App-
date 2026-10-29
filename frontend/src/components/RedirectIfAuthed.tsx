@@ -1,6 +1,7 @@
-import { Navigate, Outlet } from "react-router";
+import { Navigate } from "react-router";
 import { useAuth } from "../context/useAuth";
 import { AppSplash } from "./common/AppSplash";
+import { RouteOutlet } from "./common/RouteOutlet";
 
 export function RedirectIfAuthed() {
   const { status } = useAuth();
@@ -13,5 +14,5 @@ export function RedirectIfAuthed() {
     return <Navigate to={"/"} replace />;
   }
 
-  return <Outlet />;
+  return <RouteOutlet />;
 }

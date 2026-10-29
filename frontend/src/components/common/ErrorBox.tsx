@@ -1,11 +1,19 @@
 import styles from "./ErrorBox.module.css";
 
-export function ErrorBox({ message, onRetry }: { message: string; onRetry: () => void }) {
+export function ErrorBox({
+  message,
+  onRetry,
+  retryLabel = "Try again",
+}: {
+  message: string;
+  onRetry: () => void;
+  retryLabel?: string;
+}) {
   return (
     <div className={styles.error} role="alert">
       <p>{message}</p>
       <button type="button" className={styles.retry} onClick={onRetry}>
-        Try again
+        {retryLabel}
       </button>
     </div>
   );
