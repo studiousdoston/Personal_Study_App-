@@ -20,6 +20,7 @@ from app.schemas.ai import (
     SaveResult,
 )
 from app.services import ai_service, card_service, deck_service
+from app.services.card_images import check_card_images, check_image_changes
 
 logger = logging.getLogger(__name__)
 
@@ -160,6 +161,7 @@ def update_draft(
     draft = _get_draft(db, user_id, draft_id)
     _ensure_not_running(draft.generation)
     changes = data.model_dump(exclude_unset=True)
+    check_image_changes(db, user_id, draft, changes)
     front_changed = "front" in changes and changes["front"] != draft.front
     back_changed = "back" in changes and changes["back"] != draft.back
     for field, value in changes.items():
@@ -187,6 +189,8 @@ def save_generation(db: Session, user_id: uuid.UUID, generation_id: uuid.UUID) -
     included = [draft for draft in generation.drafts if draft.included]
     if not included:
         raise NoDraftsSelectedError()
+    for draft in included:
+        check_card_images(db, user_id, [draft.front, draft.back])
     now = _now()
     try:
         for index, draft in enumerate(included):

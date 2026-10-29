@@ -7,6 +7,7 @@ from app.database import get_db
 from app.dependencies import CurrentUser
 from app.schemas.card import CardCreate, CardOut, CardUpdate
 from app.services import card_service, deck_service
+from app.services.card_images import CardImageError
 
 router = APIRouter(tags=["cards"])
 
@@ -20,6 +21,10 @@ def _deck_not_found() -> HTTPException:
 
 def _card_not_found() -> HTTPException:
     return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Card not found")
+
+
+def _bad_image(error: CardImageError) -> HTTPException:
+    return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=error.detail)
 
 
 ##########################################################
@@ -36,6 +41,8 @@ def create_card(
         return card_service.create_card(db, current_user.id, deck_id, payload)
     except deck_service.DeckNotFoundError:
         raise _deck_not_found() from None
+    except CardImageError as error:
+        raise _bad_image(error) from None
 
 
 @router.get("/decks/{deck_id}/cards", response_model=list[CardOut])
@@ -65,6 +72,8 @@ def update_card(
         return card_service.update_card(db, current_user.id, card_id, payload)
     except card_service.CardNotFoundError:
         raise _card_not_found() from None
+    except CardImageError as error:
+        raise _bad_image(error) from None
 
 
 @router.delete("/cards/{card_id}", status_code=status.HTTP_204_NO_CONTENT)

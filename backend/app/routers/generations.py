@@ -18,6 +18,7 @@ from app.schemas.ai import (
     SaveResult,
 )
 from app.services import deck_service, generation_service
+from app.services.card_images import CardImageError
 
 router = APIRouter(tags=["generations"])
 
@@ -142,6 +143,8 @@ def save_generation(
         raise _still_running() from None
     except generation_service.NoDraftsSelectedError:
         raise _unprocessable("No drafts selected") from None
+    except CardImageError as error:
+        raise _unprocessable(error.detail) from None
 
 
 @router.delete("/generations/{generation_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -167,6 +170,8 @@ def update_draft(
         raise _draft_not_found() from None
     except generation_service.GenerationRunningError:
         raise _still_running() from None
+    except CardImageError as error:
+        raise _unprocessable(error.detail) from None
 
 
 @router.delete("/drafts/{draft_id}", status_code=status.HTTP_204_NO_CONTENT)

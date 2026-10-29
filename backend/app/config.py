@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     ai_max_cards: int = 30
     ai_timeout_seconds: int = 60
 
+    uploads_dir: str = "uploads"
+    upload_max_bytes: int = 10 * 1024 * 1024
+    upload_max_side: int = 1600
+    serve_uploads: bool = True
+
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 

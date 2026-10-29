@@ -5,5 +5,6 @@ from app.models.review import Review
 from app.models.refresh_token import RefreshToken
 from app.models.generation import Generation
 from app.models.card_draft import CardDraft
+from app.models.upload import Upload
 
-__all__ = ["User", "Deck", "Card", "Review", "RefreshToken", "Generation", "CardDraft"]
+__all__ = ["User", "Deck", "Card", "Review", "RefreshToken", "Generation", "CardDraft", "Upload"]

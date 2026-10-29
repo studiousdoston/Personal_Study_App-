@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.models import Card, Deck
 from app.schemas.card import CardCreate, CardUpdate
 from app.services import deck_service
+from app.services.card_images import check_card_images, check_image_changes
 
 
 ##########################################################
@@ -23,6 +24,7 @@ def create_card(
     db: Session, user_id: uuid.UUID, deck_id: uuid.UUID, data: CardCreate
 ) -> Card:
     deck = deck_service.get_deck(db, user_id, deck_id)
+    check_card_images(db, user_id, [data.front, data.back])
     card = new_card(deck.id, data.front, data.back)
     db.add(card)
     db.commit()
@@ -52,7 +54,9 @@ def update_card(
     db: Session, user_id: uuid.UUID, card_id: uuid.UUID, data: CardUpdate
 ) -> Card:
     card = _get_active_card(db, user_id, card_id)
-    for field, value in data.model_dump(exclude_unset=True).items():
+    changes = data.model_dump(exclude_unset=True)
+    check_image_changes(db, user_id, card, changes)
+    for field, value in changes.items():
         setattr(card, field, value)
     db.commit()
     db.refresh(card)
