@@ -1,3 +1,4 @@
+import { setAudioSessionType } from "./audioSession";
 import { type SpeechLang, splitBySpeechLanguage } from "./speechSegments";
 
 type SpeakOptions = { onEnd?: () => void };
@@ -131,6 +132,7 @@ export function speak(text: string, { onEnd }: SpeakOptions = {}) {
     finish: () => {
       if (ended) return;
       ended = true;
+      setAudioSessionType("ambient");
       if (session === current) {
         session = null;
         notify();
@@ -139,6 +141,7 @@ export function speak(text: string, { onEnd }: SpeakOptions = {}) {
     },
   };
   session = current;
+  setAudioSessionType("playback");
   notify();
 
   const start = () => {

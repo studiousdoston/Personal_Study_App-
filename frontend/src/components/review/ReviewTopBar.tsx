@@ -1,6 +1,8 @@
 import { Link } from "react-router";
 import { Volume2, VolumeX, X } from "lucide-react";
 import { useSoundEnabled } from "../../hooks/useSoundEnabled";
+import { silentModeSentence } from "../../utils/silentModeHint";
+import { SilentModeHint } from "./SilentModeHint";
 import styles from "./ReviewTopBar.module.css";
 
 type ReviewTopBarProps = {
@@ -42,7 +44,7 @@ export function ReviewTopBar({ exitTo, deckName, progress, badge }: ReviewTopBar
             className={`${styles.iconButton} ${styles.sound}`}
             aria-label="Mute sounds"
             aria-pressed={!sound.enabled}
-            title={sound.enabled ? "Mute sounds" : "Turn sounds on"}
+            title={`${sound.enabled ? "Mute sounds" : "Turn sounds on"}. ${silentModeSentence()}`}
             onClick={sound.toggleSound}
           >
             <SoundIcon size={20} aria-hidden="true" />
@@ -61,6 +63,7 @@ export function ReviewTopBar({ exitTo, deckName, progress, badge }: ReviewTopBar
           <div className={styles.fill} style={{ width: `${percent}%` }} />
         </div>
       )}
+      <SilentModeHint />
     </header>
   );
 }

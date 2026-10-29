@@ -1,3 +1,4 @@
+import { setAudioSessionType } from "./audioSession";
 import { type FeedbackDetail, type FeedbackMoment, onFeedback } from "./feedback";
 
 export type SoundPreference = "on" | "off";
@@ -12,8 +13,6 @@ const C5 = 523.25;
 const E5 = 659.25;
 const G5 = 783.99;
 const C6 = 1046.5;
-
-type NavigatorWithAudioSession = Navigator & { audioSession?: { type: string } };
 
 let context: AudioContext | null = null;
 let noise: AudioBuffer | null = null;
@@ -138,12 +137,7 @@ export function playSound(moment: FeedbackMoment, detail?: FeedbackDetail) {
 export function startSoundFeedback() {
   if (started) return;
   started = true;
-  try {
-    const { audioSession } = navigator as NavigatorWithAudioSession;
-    if (audioSession) audioSession.type = "ambient";
-  } catch {
-    // older browsers without audioSession
-  }
+  setAudioSessionType("ambient");
   for (const name of UNLOCK_EVENTS) window.addEventListener(name, unlock, true);
   onFeedback((moment, detail) => {
     if (readSoundPreference() === "on") playSound(moment, detail);

@@ -5,7 +5,7 @@ import {
   type KeyboardEvent,
   type MouseEvent,
 } from "react";
-import { Speech, Square } from "lucide-react";
+import { Square, Volume2 } from "lucide-react";
 import { markdownToPlainText } from "../../utils/markdownToPlainText";
 import {
   getSpokenText,
@@ -42,19 +42,17 @@ export function SpeakButton({ markdown }: { markdown: string }) {
     if (e.key === " " || e.key === "Enter") e.stopPropagation();
   };
 
-  const label = speaking ? "Stop reading" : "Read aloud";
-  const Icon = speaking ? Square : Speech;
+  const Icon = speaking ? Square : Volume2;
 
   return (
     <button
       type="button"
       className={`${styles.button} ${speaking ? styles.speaking : ""}`}
-      aria-label={label}
-      title={label}
       onClick={onClick}
       onKeyDown={onKeyDown}
     >
-      <Icon size={speaking ? 16 : 20} aria-hidden="true" />
+      <Icon size={16} aria-hidden="true" />
+      {speaking ? "Stop" : "Listen"}
     </button>
   );
 }
