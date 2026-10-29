@@ -4,6 +4,7 @@ import { useCreateReview } from "./useCreateReview";
 import type { Card } from "../types/models";
 import { emitFeedback } from "../utils/feedback";
 import { shuffle } from "../utils/shuffle";
+import { stopSpeaking } from "../utils/speech";
 
 export type SessionMode = "review" | "practice";
 export type Rating = 1 | 3 | 4 | 5;
@@ -67,6 +68,7 @@ export function useReviewSession(initialCards: Card[], mode: SessionMode = "revi
     if (finished) return;
     if (!flipped) setRevealed(true);
     setFlipped(!flipped);
+    stopSpeaking();
     emitFeedback("flip");
   }
 

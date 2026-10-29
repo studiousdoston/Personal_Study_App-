@@ -4,6 +4,8 @@ import { RATING_KEYS, type SessionMode, useReviewSession } from "../../hooks/use
 import { getErrorMessage } from "../../services/errors";
 import type { Card } from "../../types/models";
 import { isActivatable, isTypingTarget } from "../../utils/keyboard";
+import { markdownToPlainText } from "../../utils/markdownToPlainText";
+import { isSpeechSupported, toggleSpeech } from "../../utils/speech";
 import { ErrorBox } from "../common/ErrorBox";
 import { RatingButtons } from "./RatingButtons";
 import { ReviewCard } from "./ReviewCard";
@@ -37,6 +39,13 @@ export function ReviewSession({
       if (isActivatable(e.target)) return;
       e.preventDefault();
       session.flip();
+      return;
+    }
+
+    if (e.code === "KeyP") {
+      e.preventDefault();
+      const card = session.current!;
+      toggleSpeech(markdownToPlainText(session.flipped ? card.back : card.front));
       return;
     }
 
@@ -99,6 +108,12 @@ export function ReviewSession({
         <p className={styles.hint}>
           <kbd>Space</kbd> flip · <kbd>1</kbd> Again · <kbd>2</kbd> Hard · <kbd>3</kbd> Good ·{" "}
           <kbd>4</kbd> Easy
+          {isSpeechSupported() && (
+            <>
+              {" "}
+              · <kbd>P</kbd> read aloud
+            </>
+          )}
         </p>
       </div>
     </div>

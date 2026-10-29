@@ -4,6 +4,7 @@ import { OPTION_KEYS, useQuizSession } from "../../hooks/useQuizSession";
 import type { QuizQuestion } from "../../types/models";
 import { isActivatable, isTypingTarget } from "../../utils/keyboard";
 import { markdownToPlainText } from "../../utils/markdownToPlainText";
+import { isSpeechSupported, toggleSpeech } from "../../utils/speech";
 import { ReviewTopBar } from "../review/ReviewTopBar";
 import { QuizOptions } from "./QuizOptions";
 import { QuizPrompt } from "./QuizPrompt";
@@ -29,6 +30,12 @@ export function QuizSession({ exit, deckName, questions, onRestart }: QuizSessio
       if (!session.answered || isActivatable(e.target)) return;
       e.preventDefault();
       session.next();
+      return;
+    }
+
+    if (e.code === "KeyP") {
+      e.preventDefault();
+      toggleSpeech(markdownToPlainText(session.current!.prompt));
       return;
     }
 
@@ -89,6 +96,12 @@ export function QuizSession({ exit, deckName, questions, onRestart }: QuizSessio
         </div>
         <p className={styles.hint}>
           <kbd>1</kbd>–<kbd>4</kbd> choose · <kbd>Enter</kbd> next
+          {isSpeechSupported() && (
+            <>
+              {" "}
+              · <kbd>P</kbd> read aloud
+            </>
+          )}
         </p>
       </div>
     </div>

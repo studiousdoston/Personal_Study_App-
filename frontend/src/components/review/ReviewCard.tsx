@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, type MouseEvent } from "react";
 import type { Card } from "../../types/models";
 import { markdownToPlainText } from "../../utils/markdownToPlainText";
 import { CardContent } from "../common/CardContent";
+import { SpeakButton } from "../common/SpeakButton";
 import styles from "./ReviewCard.module.css";
 
 type ReviewCardProps = {
@@ -25,14 +26,17 @@ export function ReviewCard({ card, flipped, revealed, practice, onFlip }: Review
     (flipped ? backButton : frontButton).current?.focus();
   }, [flipped]);
 
-  const labelRow = (label: string) => (
+  const labelRow = (label: string, markdown: string) => (
     <span className={styles.labelRow}>
       <span className={styles.label}>{label}</span>
-      {practice && (
-        <span className={styles.practice} title="Repeat for practice. This answer isn't saved.">
-          Practice
-        </span>
-      )}
+      <span className={styles.labelEnd}>
+        {practice && (
+          <span className={styles.practice} title="Repeat for practice. This answer isn't saved.">
+            Practice
+          </span>
+        )}
+        <SpeakButton markdown={markdown} />
+      </span>
     </span>
   );
 
@@ -47,7 +51,7 @@ export function ReviewCard({ card, flipped, revealed, practice, onFlip }: Review
       <div className={styles.scene} onClick={onFlip}>
         <div className={`${styles.inner} ${flipped ? styles.flipped : ""}`}>
           <div className={`${styles.face} ${styles.frontFace}`} inert={flipped}>
-            {labelRow("Question")}
+            {labelRow("Question", card.front)}
             <div id={questionId} className={`${styles.body} ${styles.front}`}>
               <CardContent markdown={card.front} variant="full" />
             </div>
@@ -69,7 +73,7 @@ export function ReviewCard({ card, flipped, revealed, practice, onFlip }: Review
           </div>
 
           <div className={`${styles.face} ${styles.backFace}`} inert={!flipped}>
-            {labelRow("Answer")}
+            {labelRow("Answer", card.back)}
             <div id={answerId} className={`${styles.body} ${styles.back}`}>
               <CardContent markdown={card.back} variant="full" />
             </div>

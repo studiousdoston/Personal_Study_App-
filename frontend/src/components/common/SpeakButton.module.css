@@ -1,0 +1,41 @@
+.button {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: var(--tap-target);
+  height: var(--tap-target);
+  margin: calc(-1 * var(--space-3));
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-radius: var(--radius-pill);
+}
+/* the negative margin keeps the full 48px hit area without making the label row taller */
+
+.button:hover {
+  color: var(--color-primary-text);
+  background: var(--color-primary-soft);
+}
+
+.speaking {
+  color: var(--color-primary-text);
+  background: var(--color-primary-soft);
+}
+
+.speaking svg {
+  fill: currentColor;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .speaking svg {
+    animation: none;
+  }
+}

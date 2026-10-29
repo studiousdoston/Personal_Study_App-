@@ -11,6 +11,14 @@
 }
 /* same surface card as the review card, a bit shorter so the 4 options fit on a phone */
 
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: var(--space-5);
+}
+
 .label {
   font-size: var(--font-size-xs);
   font-weight: 600;
