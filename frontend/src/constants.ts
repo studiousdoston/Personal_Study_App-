@@ -41,3 +41,7 @@ export const AI_MAX_INPUT_CHARS = 12000;
 export const AI_MAX_CARDS = 30;
 export const AI_MAX_SOURCES = 5;
 export const AI_MAX_INSTRUCTIONS = 300;
+
+// must match the backend: CardText max_length (schemas/card.py) and settings.upload_max_bytes
+export const CARD_TEXT_MAX_LENGTH = 2000;
+export const UPLOAD_MAX_MB = 10;

@@ -1,0 +1,25 @@
+.toolbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-1);
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+/* one row on phones; it scrolls sideways instead of wrapping */
+
+.toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.divider {
+  flex-shrink: 0;
+  width: 1px;
+  height: 24px;
+  margin: 0 var(--space-1);
+  background: var(--color-border);
+}

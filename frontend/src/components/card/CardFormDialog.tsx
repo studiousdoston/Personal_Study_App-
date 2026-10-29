@@ -1,13 +1,25 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useId, useRef, useState } from "react";
+import type { Editor } from "@tiptap/react";
+import { lazy, Suspense, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { CARD_TEXT_MAX_LENGTH } from "../../constants";
+import { useCardImage } from "../../hooks/useCardImage";
 import { useCreateCard } from "../../hooks/useCreateCard";
 import { useUpdateCard } from "../../hooks/useUpdateCard";
 import { getErrorMessage } from "../../services/errors";
 import type { Card, CardDraft, CardUpdate, DraftUpdate } from "../../types/models";
 import { scrollFieldIntoView } from "../../utils/scrollFieldIntoView";
+import { ErrorBox } from "../common/ErrorBox";
 import dialog from "../common/Dialog.module.css";
+import { EditorSkeleton } from "../editor/EditorSkeleton";
 import styles from "./CardFormDialog.module.css";
+
+const RichTextEditor = lazy(() =>
+  import("../editor/RichTextEditor").then((m) => ({ default: m.RichTextEditor })),
+);
+const EditorToolbar = lazy(() =>
+  import("../editor/EditorToolbar").then((m) => ({ default: m.EditorToolbar })),
+);
 
 type CardFormDialogProps = {
   open: boolean;
@@ -21,6 +33,12 @@ type DraftEdit = {
   draft: CardDraft;
   onSubmit: (changes: DraftUpdate) => Promise<unknown>;
 };
+
+type Side = "front" | "back";
+
+function tooLong(text: string): boolean {
+  return [...text.trim()].length > CARD_TEXT_MAX_LENGTH;
+}
 
 export function CardFormDialog({
   open,
@@ -40,14 +58,18 @@ export function CardFormDialog({
     mutationFn: async (changes: DraftUpdate) => draftEdit?.onSubmit(changes),
   });
   const mutation = isDraft ? draftMutation : isEdit ? updateMutation : createMutation;
-  const frontRef = useRef<HTMLTextAreaElement>(null);
-  const frontId = useId();
-  const backId = useId();
+  const [frontEditor, setFrontEditor] = useState<Editor | null>(null);
+  const [backEditor, setBackEditor] = useState<Editor | null>(null);
+  const [active, setActive] = useState<Side>("front");
+  const image = useCardImage([frontEditor, backEditor]);
+  const activeEditor = active === "front" ? frontEditor : backEditor;
 
   function close() {
     setFront(initial?.front ?? "");
     setBack(initial?.back ?? "");
+    setActive("front");
     mutation.reset();
+    image.dismiss();
     onOpenChange(false);
   }
 
@@ -56,14 +78,14 @@ export function CardFormDialog({
       onOpenChange(true);
       return;
     }
-    if (mutation.isPending) return;
+    if (mutation.isPending || image.pending) return;
     close();
   }
 
   async function save(addAnother: boolean) {
     if (!canSubmit) return;
-    if (addAnother && document.activeElement !== frontRef.current) {
-      frontRef.current?.focus();
+    if (addAnother && !frontEditor?.isFocused) {
+      frontEditor?.commands.focus();
     }
     const data = { front: front.trim(), back: back.trim() };
     try {
@@ -90,7 +112,8 @@ export function CardFormDialog({
     if (addAnother) {
       setFront("");
       setBack("");
-      frontRef.current?.focus();
+      setActive("front");
+      frontEditor?.commands.focus();
       return;
     }
     close();
@@ -101,18 +124,19 @@ export function CardFormDialog({
     void save(false);
   }
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      e.currentTarget.form?.requestSubmit();
-    }
-  }
-
   function keepFocus(e: React.PointerEvent | React.MouseEvent) {
     e.preventDefault();
   }
 
-  const canSubmit = front.trim() !== "" && back.trim() !== "" && !mutation.isPending;
+  const frontTooLong = tooLong(front);
+  const backTooLong = tooLong(back);
+  const canSubmit =
+    front.trim() !== "" &&
+    back.trim() !== "" &&
+    !frontTooLong &&
+    !backTooLong &&
+    !mutation.isPending &&
+    !image.pending;
 
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
@@ -121,6 +145,7 @@ export function CardFormDialog({
         <Dialog.Content
           className={`${dialog.content} ${styles.content}`}
           onFocus={scrollFieldIntoView}
+          onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <header className={styles.header}>
             <Dialog.Title className={styles.title}>
@@ -136,37 +161,67 @@ export function CardFormDialog({
           </header>
 
           <form className={styles.form} onSubmit={handleSubmit}>
-            <div className={styles.field}>
-              <label htmlFor={frontId} className={styles.label}>
-                Front
-              </label>
-              <textarea
-                ref={frontRef}
-                id={frontId}
-                className={styles.textarea}
-                value={front}
-                onChange={(e) => {
-                  if (!mutation.isPending) setFront(e.target.value);
-                }}
-                onKeyDown={handleKeyDown}
-                required
-              />
+            <Suspense fallback={<EditorSkeleton variant="toolbar" />}>
+              <div className={styles.toolbar}>
+                <EditorToolbar
+                  editor={activeEditor}
+                  hasImage={image.hasImage}
+                  imagePending={image.pending}
+                  disabled={mutation.isPending}
+                  onImageFile={(file) => image.attach(file, activeEditor)}
+                  onRemoveImage={image.remove}
+                />
+              </div>
+            </Suspense>
+
+            {image.knownError && (
+              <p role="alert" className={styles.error}>
+                {image.knownError}
+              </p>
+            )}
+            {image.error && (
+              <ErrorBox message={getErrorMessage(image.error)} onRetry={image.retry} />
+            )}
+
+            <div className={styles.field} onFocus={() => setActive("front")}>
+              <span className={styles.label}>Front</span>
+              <Suspense fallback={<EditorSkeleton variant="field" />}>
+                <RichTextEditor
+                  ref={setFrontEditor}
+                  value={front}
+                  onChange={setFront}
+                  ariaLabel="Front"
+                  autoFocus
+                  disabled={mutation.isPending}
+                  onImageFile={(file) => image.attach(file, frontEditor)}
+                />
+              </Suspense>
+              {frontTooLong && (
+                <p role="alert" className={styles.error}>
+                  Front is too long. Shorten it to {CARD_TEXT_MAX_LENGTH} characters, including
+                  formatting.
+                </p>
+              )}
             </div>
 
-            <div className={styles.field}>
-              <label htmlFor={backId} className={styles.label}>
-                Back
-              </label>
-              <textarea
-                id={backId}
-                className={styles.textarea}
-                value={back}
-                onChange={(e) => {
-                  if (!mutation.isPending) setBack(e.target.value);
-                }}
-                onKeyDown={handleKeyDown}
-                required
-              />
+            <div className={styles.field} onFocus={() => setActive("back")}>
+              <span className={styles.label}>Back</span>
+              <Suspense fallback={<EditorSkeleton variant="field" />}>
+                <RichTextEditor
+                  ref={setBackEditor}
+                  value={back}
+                  onChange={setBack}
+                  ariaLabel="Back"
+                  disabled={mutation.isPending}
+                  onImageFile={(file) => image.attach(file, backEditor)}
+                />
+              </Suspense>
+              {backTooLong && (
+                <p role="alert" className={styles.error}>
+                  Back is too long. Shorten it to {CARD_TEXT_MAX_LENGTH} characters, including
+                  formatting.
+                </p>
+              )}
             </div>
 
             {mutation.isError && (

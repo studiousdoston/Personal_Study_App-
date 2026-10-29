@@ -2,6 +2,7 @@ import type { KeyboardEvent, MouseEvent } from "react";
 import Markdown, { type Components } from "react-markdown";
 import rehypeSanitize, { defaultSchema, type Options as SanitizeSchema } from "rehype-sanitize";
 import type { Nodes, Root } from "mdast";
+import { isUploadUrl } from "../../utils/isUploadUrl";
 import { remarkUnderline } from "../../utils/remarkUnderline";
 import styles from "./CardContent.module.css";
 
@@ -9,8 +10,6 @@ type CardContentProps = {
   markdown: string;
   variant: "full" | "compact";
 };
-
-const UPLOAD_SRC = /^\/uploads\/[0-9a-f]{32}\.webp$/;
 
 const schema: SanitizeSchema = {
   ...defaultSchema,
@@ -88,7 +87,7 @@ const components: Components = {
       <>{children}</>
     ),
   img: ({ src, alt }) =>
-    typeof src === "string" && UPLOAD_SRC.test(src) ? (
+    typeof src === "string" && isUploadUrl(src) ? (
       <img src={src} alt={alt ?? ""} loading="lazy" decoding="async" className={styles.image} />
     ) : null,
 };

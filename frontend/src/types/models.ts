@@ -22,3 +22,4 @@ export type GenerationSummary = components["schemas"]["GenerationSummary"];
 export type CardDraft = components["schemas"]["CardDraftOut"];
 export type DraftUpdate = components["schemas"]["DraftUpdate"];
 export type SaveResult = components["schemas"]["SaveResult"];
+export type Upload = components["schemas"]["UploadOut"];

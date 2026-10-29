@@ -1,0 +1,56 @@
+.field {
+  padding: var(--space-3) var(--space-4);
+  font-size: 16px;
+  line-height: 1.5;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: text;
+}
+
+.field:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.prose {
+  min-height: 4.5em;
+  outline: none;
+}
+/* 4.5em = 3 lines at line-height 1.5; the field grows with the content */
+
+.prose p,
+.prose li {
+  white-space: pre-wrap;
+}
+/* ProseMirror needs pre-wrap; CardContent's pre-line would swallow typed spaces */
+
+.prose h1,
+.prose h2,
+.prose h3 {
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.prose h1 {
+  font-size: 1.4em;
+}
+
+.prose h2 {
+  font-size: 1.2em;
+}
+
+.prose h3 {
+  font-size: 1.05em;
+}
+
+.prose img {
+  display: block;
+  max-width: 100%;
+}
+
+.prose img:global(.ProseMirror-selectednode) {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

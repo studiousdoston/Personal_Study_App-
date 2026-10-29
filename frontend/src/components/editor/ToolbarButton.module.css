@@ -1,0 +1,29 @@
+.button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 var(--space-2);
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--color-surface);
+}
+
+.button[aria-pressed="true"],
+.button[data-state="open"] {
+  color: var(--color-primary-text);
+  background: var(--color-primary-soft);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
