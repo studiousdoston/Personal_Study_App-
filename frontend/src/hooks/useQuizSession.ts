@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { QuizQuestion } from "../types/models";
+import { emitFeedback } from "../utils/feedback";
 
 export const OPTION_KEYS = ["1", "2", "3", "4"];
 
@@ -30,11 +31,19 @@ export function useQuizSession(questions: QuizQuestion[]) {
     setAnswers((prev) =>
       prev.length > position ? prev : [...prev, { question: current, chosen: index }],
     );
+    emitFeedback(current.options[index].is_correct ? "correct" : "wrong");
   }
 
   function next() {
     if (!answered) return;
     setPosition((prev) => prev + 1);
+    if (position + 1 === questions.length) {
+      emitFeedback("quizDone", {
+        total: questions.length,
+        correct,
+        perfect: correct === questions.length,
+      });
+    }
   }
 
   const correct = answers.filter(isCorrect).length;

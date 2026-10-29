@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";
 import { useCreateReview } from "./useCreateReview";
 import type { Card } from "../types/models";
+import { emitFeedback } from "../utils/feedback";
 import { shuffle } from "../utils/shuffle";
 
 export type SessionMode = "review" | "practice";
@@ -13,6 +14,10 @@ export const REMEMBERED_MIN_RATING = 3;
 const MAX_TIME_TAKEN_MS = 3_600_000;
 
 type QueueItem = { card: Card; practice: boolean };
+
+function countRemembered(ratings: Rating[]) {
+  return ratings.filter((r) => r >= REMEMBERED_MIN_RATING).length;
+}
 
 function refreshCounts(queryClient: QueryClient) {
   queryClient.invalidateQueries({ queryKey: ["decks"], refetchType: "all" });
@@ -62,25 +67,32 @@ export function useReviewSession(initialCards: Card[], mode: SessionMode = "revi
     if (finished) return;
     if (!flipped) setRevealed(true);
     setFlipped(!flipped);
+    emitFeedback("flip");
   }
 
-  function next(item: QueueItem, rating: Rating) {
+  function next(item: QueueItem, rating: Rating, ratings: Rating[]) {
     if (rating === AGAIN) setQueue((prev) => [...prev, { card: item.card, practice: true }]);
     setPosition((prev) => prev + 1);
     setFlipped(false);
     setRevealed(false);
+    if (rating !== AGAIN && position + 1 === queue.length) {
+      emitFeedback("sessionDone", {
+        total: initialCards.length,
+        correct: countRemembered(ratings),
+      });
+    }
   }
 
   function rate(rating: Rating) {
     if (!current || !revealed || mutation.isPending) return;
     if (current.practice) {
       setPracticeRepeats((prev) => prev + 1);
-      next(current, rating);
+      next(current, rating, firstRatings);
       return;
     }
     if (mode === "practice") {
       setFirstRatings((prev) => [...prev, rating]);
-      next(current, rating);
+      next(current, rating, [...firstRatings, rating]);
       return;
     }
     const timeTaken = Math.min(Date.now() - shownAt.current, MAX_TIME_TAKEN_MS);
@@ -91,7 +103,7 @@ export function useReviewSession(initialCards: Card[], mode: SessionMode = "revi
         onSuccess: () => {
           needsRefresh.current = true;
           setFirstRatings((prev) => [...prev, rating]);
-          next(current, rating);
+          next(current, rating, [...firstRatings, rating]);
           mutation.reset();
         },
         onError: () => setFailedRating(rating),
@@ -103,7 +115,7 @@ export function useReviewSession(initialCards: Card[], mode: SessionMode = "revi
     if (failedRating !== null) rate(failedRating);
   }
 
-  const remembered = firstRatings.filter((r) => r >= REMEMBERED_MIN_RATING).length;
+  const remembered = countRemembered(firstRatings);
 
   return {
     current: current?.card,

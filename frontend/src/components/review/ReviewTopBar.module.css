@@ -12,23 +12,40 @@
   gap: var(--space-2);
 }
 
-.close {
+.iconButton {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: var(--tap-target);
   height: var(--tap-target);
-  margin-left: calc(-1 * var(--space-3));
   color: var(--color-text-muted);
+  background: none;
+  border: none;
   border-radius: var(--radius-md);
 }
 
-.close:hover {
+.iconButton:hover {
   color: var(--color-text);
   background: var(--color-surface);
 }
-/* the negative margin lines the X icon up with the card edge below */
+
+.close {
+  margin-left: calc(-1 * var(--space-3));
+}
+
+.sound {
+  margin-right: calc(-1 * var(--space-3));
+}
+/* the negative margins line the icons up with the card edges below */
+
+.end {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+}
 
 .name {
   flex: 0 1 auto;
@@ -52,8 +69,6 @@
 /* same amber pill as the "Practice" label on repeated review cards */
 
 .count {
-  flex-shrink: 0;
-  margin-left: auto;
   font-family: var(--font-mono);
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
