@@ -7,9 +7,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "react-router";
 import { router } from "./router.tsx";
 import { UpdateBanner } from "./components/common/UpdateBanner.tsx";
+import { startConfettiFeedback } from "./utils/confetti.ts";
 import { startSoundFeedback } from "./utils/sound.ts";
 
 startSoundFeedback();
+startConfettiFeedback();
 
 const queryClient = new QueryClient({
   defaultOptions: {

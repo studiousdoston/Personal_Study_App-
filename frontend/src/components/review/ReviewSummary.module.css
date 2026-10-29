@@ -7,10 +7,6 @@
   text-align: center;
 }
 
-.title {
-  font-size: var(--font-size-xl);
-}
-
 .stats {
   display: grid;
   grid-template-columns: 1fr 1fr;

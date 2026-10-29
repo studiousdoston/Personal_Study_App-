@@ -7,10 +7,6 @@
   text-align: center;
 }
 
-.title {
-  font-size: var(--font-size-xl);
-}
-
 .score {
   display: flex;
   flex-direction: column;

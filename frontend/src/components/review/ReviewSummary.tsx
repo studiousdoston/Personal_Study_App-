@@ -3,6 +3,8 @@ import { Shuffle } from "lucide-react";
 import type { ReviewExit } from "../../hooks/useReviewExit";
 import type { SessionMode } from "../../hooks/useReviewSession";
 import { plural } from "../../utils/plural";
+import { ResultHeading } from "../common/ResultHeading";
+import { StreakMilestone } from "./StreakMilestone";
 import styles from "./ReviewSummary.module.css";
 
 type ReviewSummaryProps = {
@@ -28,7 +30,14 @@ export function ReviewSummary({
 
   return (
     <main className={styles.summary}>
-      <h1 className={styles.title}>{practice ? "Practice complete" : "Session complete"}</h1>
+      <ResultHeading
+        title={practice ? "Practice complete" : "Session complete"}
+        correct={remembered}
+        total={cards}
+        showNumbers
+      >
+        {!practice && <StreakMilestone />}
+      </ResultHeading>
       {practice ? (
         <dl className={`${styles.stats} ${styles.single}`}>
           <div className={styles.stat}>

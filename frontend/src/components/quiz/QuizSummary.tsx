@@ -3,6 +3,7 @@ import { Check, Shuffle } from "lucide-react";
 import type { ReviewExit } from "../../hooks/useReviewExit";
 import type { MissedQuestion } from "../../hooks/useQuizSession";
 import { CardContent } from "../common/CardContent";
+import { ResultHeading } from "../common/ResultHeading";
 import styles from "./QuizSummary.module.css";
 
 type QuizSummaryProps = {
@@ -24,7 +25,7 @@ export function QuizSummary({
 }: QuizSummaryProps) {
   return (
     <main className={styles.summary}>
-      <h1 className={styles.title}>Quiz complete</h1>
+      <ResultHeading title="Quiz complete" correct={correct} total={total} />
 
       <div className={styles.score}>
         <p className={styles.points}>
