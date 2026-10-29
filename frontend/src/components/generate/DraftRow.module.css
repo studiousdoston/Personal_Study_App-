@@ -35,12 +35,6 @@
   padding-block: var(--space-2);
 }
 
-.front,
-.back {
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-
 .front {
   font-weight: 500;
 }

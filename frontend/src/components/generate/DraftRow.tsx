@@ -1,6 +1,7 @@
-import { useId } from "react";
 import { Lock, Pencil, Trash2 } from "lucide-react";
 import type { CardDraft } from "../../types/models";
+import { markdownToPlainText } from "../../utils/markdownToPlainText";
+import { CardContent } from "../common/CardContent";
 import styles from "./DraftRow.module.css";
 
 type DraftRowProps = {
@@ -11,8 +12,6 @@ type DraftRowProps = {
 };
 
 export function DraftRow({ draft, onToggle, onEdit, onDelete }: DraftRowProps) {
-  const frontId = useId();
-
   return (
     <li className={`${styles.row} ${draft.included ? "" : styles.excluded}`}>
       <label className={styles.check}>
@@ -21,14 +20,16 @@ export function DraftRow({ draft, onToggle, onEdit, onDelete }: DraftRowProps) {
           className={styles.checkbox}
           checked={draft.included}
           onChange={(e) => onToggle(e.target.checked)}
-          aria-labelledby={frontId}
+          aria-label={markdownToPlainText(draft.front)}
         />
       </label>
       <div className={styles.content}>
-        <p id={frontId} className={styles.front}>
-          {draft.front}
-        </p>
-        <p className={styles.back}>{draft.back}</p>
+        <div className={styles.front}>
+          <CardContent markdown={draft.front} variant="compact" />
+        </div>
+        <div className={styles.back}>
+          <CardContent markdown={draft.back} variant="compact" />
+        </div>
         {(draft.is_duplicate || draft.edited) && (
           <div className={styles.badges}>
             {draft.is_duplicate && <span className={styles.duplicate}>Already in deck</span>}

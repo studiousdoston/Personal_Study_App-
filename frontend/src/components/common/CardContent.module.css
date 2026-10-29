@@ -1,0 +1,126 @@
+.content {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.content p {
+  white-space: pre-line;
+}
+/* pre-line keeps the single line breaks of older plain-text cards */
+
+.content ul,
+.content ol {
+  padding-left: 1.4em;
+}
+
+.content blockquote {
+  padding-left: var(--space-3);
+  color: var(--color-text-muted);
+  border-left: 3px solid var(--color-border);
+}
+
+.content a {
+  color: var(--color-primary-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.content code {
+  padding: 0.1em 0.3em;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: color-mix(in srgb, var(--color-text) 8%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+.content pre code {
+  padding: 0;
+  font-size: inherit;
+  background: none;
+}
+
+.heading {
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* full: review card, quiz question */
+
+.full > * + * {
+  margin-top: 0.6em;
+}
+
+.full li + li {
+  margin-top: 0.2em;
+}
+
+.full .h1 {
+  font-size: 1.4em;
+}
+
+.full .h2 {
+  font-size: 1.2em;
+}
+
+.full .h3 {
+  font-size: 1.05em;
+}
+
+.full pre {
+  contain: inline-size;
+  overflow-x: auto;
+  padding: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  line-height: 1.5;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+/* inline-size containment stops a long code line from widening the card;
+   the block scrolls sideways instead */
+
+.full .image {
+  max-height: 40vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+}
+
+/* compact: card list, drafts, quiz summary */
+
+.compact {
+  position: relative;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+.compact:has(.image) {
+  min-height: 40px;
+  padding-right: calc(40px + var(--space-2));
+}
+/* room on the right for the thumbnail */
+
+.compact .heading {
+  font-size: inherit;
+}
+
+.compact pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  white-space: pre-wrap;
+}
+
+.compact .image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}

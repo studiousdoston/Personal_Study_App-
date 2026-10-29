@@ -1,5 +1,6 @@
 import { Check, X } from "lucide-react";
 import type { QuizQuestion } from "../../types/models";
+import { markdownToPlainText } from "../../utils/markdownToPlainText";
 import styles from "./QuizOptions.module.css";
 
 type QuizOptionsProps = {
@@ -29,7 +30,7 @@ export function QuizOptions({ options, chosen, onPick }: QuizOptionsProps) {
             <span className={styles.key} aria-hidden="true">
               {index + 1}
             </span>
-            <span className={styles.text}>{option.text}</span>
+            <span className={styles.text}>{markdownToPlainText(option.text)}</span>
             {showCorrect && <Check size={20} className={styles.iconCorrect} aria-hidden="true" />}
             {showWrong && <X size={20} className={styles.iconWrong} aria-hidden="true" />}
             {showCorrect && <span className={styles.srOnly}>(correct answer)</span>}

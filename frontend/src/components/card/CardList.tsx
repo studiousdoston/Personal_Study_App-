@@ -4,6 +4,8 @@ import { useDeleteCard } from "../../hooks/useDeleteCard";
 import { getErrorMessage } from "../../services/errors";
 import type { Card } from "../../types/models";
 import { isDue } from "../../utils/isDue";
+import { markdownToPlainText } from "../../utils/markdownToPlainText";
+import { CardContent } from "../common/CardContent";
 import { ConfirmDialog } from "../common/ConfirmDialog";
 import styles from "./CardList.module.css";
 
@@ -16,7 +18,8 @@ type CardListProps = {
 
 const PREVIEW_LENGTH = 80;
 
-function preview(text: string) {
+function preview(markdown: string) {
+  const text = markdownToPlainText(markdown);
   return text.length > PREVIEW_LENGTH ? `${text.slice(0, PREVIEW_LENGTH).trimEnd()}…` : text;
 }
 
@@ -47,11 +50,15 @@ export function CardList({ cards, now, onEdit, onAdd }: CardListProps) {
                   <span className={styles.label}>Front</span>
                   {isDue(card, now) && <span className={styles.due}>Due</span>}
                 </div>
-                <p className={styles.front}>{card.front}</p>
+                <div className={styles.front}>
+                  <CardContent markdown={card.front} variant="compact" />
+                </div>
               </div>
               <div className={styles.side}>
                 <span className={styles.label}>Back</span>
-                <p className={styles.back}>{card.back}</p>
+                <div className={styles.back}>
+                  <CardContent markdown={card.back} variant="compact" />
+                </div>
               </div>
             </div>
             <div className={styles.actions}>

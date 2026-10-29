@@ -55,14 +55,6 @@
   color: var(--color-text-muted);
 }
 
-.front,
-.back {
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-/* pre-wrap keeps the line breaks a user typed inside a card,
-   overflow-wrap breaks very long words or URLs */
-
 .front {
   font-weight: 600;
 }

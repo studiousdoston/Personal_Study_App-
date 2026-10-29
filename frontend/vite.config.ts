@@ -39,12 +39,18 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      "/uploads": "http://localhost:8000",
+    },
+  },
   preview: {
     proxy: {
       "/api": {
         target: "http://127.0.0.1:8010",
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/uploads": "http://127.0.0.1:8010",
     },
   },
 });

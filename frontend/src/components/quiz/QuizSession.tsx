@@ -3,6 +3,7 @@ import type { ReviewExit } from "../../hooks/useReviewExit";
 import { OPTION_KEYS, useQuizSession } from "../../hooks/useQuizSession";
 import type { QuizQuestion } from "../../types/models";
 import { isActivatable, isTypingTarget } from "../../utils/keyboard";
+import { markdownToPlainText } from "../../utils/markdownToPlainText";
 import { ReviewTopBar } from "../review/ReviewTopBar";
 import { QuizOptions } from "./QuizOptions";
 import { QuizPrompt } from "./QuizPrompt";
@@ -75,7 +76,7 @@ export function QuizSession({ exit, deckName, questions, onRestart }: QuizSessio
           {session.answered
             ? session.answeredCorrectly
               ? "Correct."
-              : `Wrong. The answer is ${session.correctAnswer}.`
+              : `Wrong. The answer is ${markdownToPlainText(session.correctAnswer)}.`
             : ""}
         </p>
       </main>

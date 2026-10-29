@@ -1,10 +1,15 @@
+import { CardContent } from "../common/CardContent";
 import styles from "./QuizPrompt.module.css";
 
 export function QuizPrompt({ prompt }: { prompt: string }) {
   return (
-    <section className={styles.card} aria-label="Question">
-      <span className={styles.label}>Question</span>
-      <h1 className={styles.prompt}>{prompt}</h1>
+    <section className={styles.card} aria-labelledby="quiz-prompt-label">
+      <h1 id="quiz-prompt-label" className={styles.label}>
+        Question
+      </h1>
+      <div className={styles.prompt}>
+        <CardContent markdown={prompt} variant="full" />
+      </div>
     </section>
   );
 }

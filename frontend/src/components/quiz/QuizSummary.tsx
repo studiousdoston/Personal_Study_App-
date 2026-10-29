@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { Check, Shuffle } from "lucide-react";
 import type { ReviewExit } from "../../hooks/useReviewExit";
 import type { MissedQuestion } from "../../hooks/useQuizSession";
+import { CardContent } from "../common/CardContent";
 import styles from "./QuizSummary.module.css";
 
 type QuizSummaryProps = {
@@ -40,12 +41,14 @@ export function QuizSummary({
           <ul className={styles.list}>
             {missed.map((item) => (
               <li key={item.cardId} className={styles.item}>
-                <p className={styles.question}>{item.prompt}</p>
-                <p className={styles.answer}>
+                <div className={styles.question}>
+                  <CardContent markdown={item.prompt} variant="compact" />
+                </div>
+                <div className={styles.answer}>
                   <Check size={16} className={styles.check} aria-hidden="true" />
                   <span className={styles.srOnly}>Correct answer: </span>
-                  {item.answer}
-                </p>
+                  <CardContent markdown={item.answer} variant="compact" />
+                </div>
               </li>
             ))}
           </ul>
